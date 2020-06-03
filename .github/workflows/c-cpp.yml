@@ -1,0 +1,32 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build_agentmodel:
+    name: Build agentmodel.lib
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout
+    - name: Install Dependencies
+      run: apt-get cmake
+    - name: clean up
+      run: rm -rf /app/build_lib
+    - name: setup cmake      
+      run: cd /app && mkdir build_lib && cd build_lib && cmake -G "Unix Makefiles" \
+        -DBUILD_WITH_INJECTION=OFF \
+        -DBUILD_TESTS=OFF \
+        -DBUILD_FOR_COVERAGE=OFF \
+        -DCREATE_DOXYGEN_TARGET=OFF \
+        -DBUILD_GTEST=OFF \
+        -DCREATE_INTERFACE_GENERATOR_TARGET=OFF \
+        -DBUILD_INTERFACE_GENERATOR_TESTS=OFF \
+        -DBUILD_VEHICLE_MODEL=ON \
+        -DCMAKE_BUILD_TYPE=Debug ..
+    - name: make
+      run: cd /app/build_lib && make agent_model
