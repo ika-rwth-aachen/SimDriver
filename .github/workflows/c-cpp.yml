@@ -15,16 +15,11 @@ jobs:
     - uses: actions/checkout@v2
     - name: cd to repo
       run: echo $GITHUB_WORKSPACE && cd $GITHUB_WORKSPACE
+    - name: install doxygen
+      run: sudo apt-get install -y doxygen graphviz
     - name: setup cmake      
-      run: mkdir build_lib && cd build_lib && cmake -G "Unix Makefiles" \
-        -DBUILD_WITH_INJECTION=ON \
-        -DBUILD_TESTS=OFF \
-        -DBUILD_FOR_COVERAGE=OFF \
-        -DCREATE_DOXYGEN_TARGET=OFF \
-        -DBUILD_GTEST=OFF \
-        -DCREATE_INTERFACE_GENERATOR_TARGET=OFF \
-        -DBUILD_INTERFACE_GENERATOR_TESTS=OFF \
-        -DBUILD_VEHICLE_MODEL=OFF \
-        -DCMAKE_BUILD_TYPE=Debug ..
-    - name: make
+      run: mkdir build_lib && cd build_lib && cmake -G "Unix Makefiles" -DBUILD_WITH_INJECTION=ON -DCREATE_DOXYGEN_TARGET=ON -DCMAKE_BUILD_TYPE=Debug ..
+    - name: compile agent model
       run: cd build_lib && echo $(ls) && make agent_model
+    - name: compile doumentation
+      run: cd build_lib && echo $(make help) && make doxygen
