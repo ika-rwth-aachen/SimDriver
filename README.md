@@ -136,7 +136,7 @@ Why do we do it like this? The interface is very complex. A csv table of all dat
 
 ## TODOs:
 * GROUP Documentation:
-    * ~~Add this README to doxygen main page~~~
+    * ~~Add this README to doxygen main page~~
     * ~~Listing in README with actual values (doxygen cannot parse it correctly)~~
     * Publish doxygen (on github?)
     * Move API to a separate file and add to doxygen.
