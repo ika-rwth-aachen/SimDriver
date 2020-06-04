@@ -128,7 +128,7 @@ If you have any problems, please don't hesitate to contact Daniel or Jens (see [
 
 ## For contributers and forkers
 
-To edit or regenerate the interface and correlated files of the driver model (AgentModelInterface[Injection].(h|cpp)), developers should use the DataGenerator tool found als submodule in the lib/ folder. If you create the cmake project with -DCREATE_INTERFACE_GENERATOR_TARGET=ON, a target is created, which generates the files based on the configuration in resources/interface_generator. To change the interface, please edit the json and csv file in this folder and regenerate the source code.
+To edit or regenerate the interface and correlated files of the driver model (AgentModelInterface[Injection].(h\|cpp)), developers should use the DataGenerator tool found als submodule in the lib/ folder. If you create the cmake project with -DCREATE_INTERFACE_GENERATOR_TARGET=ON, a target is created, which generates the files based on the configuration in resources/interface_generator. To change the interface, please edit the json and csv file in this folder and regenerate the source code.
 
 Trouble shooting: If the generation doesn't work due to missing nodejs packages, do a `cd lib/DataGenerator && npm install`. nodejs and npm need to be installed (see also Dockerfile). Then, try to build the generate_interface target again.
 
