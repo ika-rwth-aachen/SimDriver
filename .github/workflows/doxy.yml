@@ -29,8 +29,5 @@ jobs:
         ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
         BRANCH: gh-pages # The branch the action should deploy to.
         FOLDER: docs/html # The folder the action should deploy. 
-    - name: debug doc
-      run: |
-        sudo apt-get install tree 
-        echo $(tree -d -L 4)
+   
       
