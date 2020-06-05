@@ -1,0 +1,22 @@
+name: Build agent_model
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build_agentmodel:
+    name: Build agentmodel.lib
+    runs-on: ubuntu-18.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: cd to repo
+      run: echo $GITHUB_WORKSPACE && cd $GITHUB_WORKSPACE
+    - name: setup cmake      
+      run: mkdir build_lib && cd build_lib && cmake -G "Unix Makefiles" -DBUILD_WITH_INJECTION=ON -DCREATE_DOXYGEN_TARGET=OFF -DCMAKE_BUILD_TYPE=Debug ..
+    - name: compile agent model
+      run: cd build_lib && echo $(ls) && make agent_mode
+   
