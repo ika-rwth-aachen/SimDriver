@@ -69,7 +69,7 @@ public:
     struct Parameters {
         double steerTransmission = 0.5; // The steering transmission (input.steer -> state.delta) (in *-*)
         double wheelBase = 3.0; // The wheel base (in *m*)
-        Vector2 cwA = {0.6, 1.2}; // The cw parameters multiplied with the front and side area (in *m^2*)
+        Vector2 cwA = {0.6, 1.2}; // The cw parameters multiplied with the front and side area (in *m^2*) TODO: update in interface
         double mass = 1.5e3; // The mass (in *kg*)
         double powerMax = 1.0e5; // Maximum drive power (in *W*)
         double forceMax = 1.5e4; // Maximum drive force (in *N*)
