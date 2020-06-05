@@ -21,3 +21,7 @@ jobs:
       run: mkdir build_lib && cd build_lib && cmake -G "Unix Makefiles" -DBUILD_WITH_INJECTION=ON -DCREATE_DOXYGEN_TARGET=ON -DCMAKE_BUILD_TYPE=Debug ..
     - name: compile doumentation
       run: cd build_lib && echo $(make help) && make doxygen
+    - name: debug doc
+      run: |
+        echo $(ls -la)
+      
