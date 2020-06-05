@@ -1,0 +1,4 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" href="$classagent__model_1_1Interface.html" title="The agent model interface. The class implements the data structure of the agent model, consisting of input, state, memory and parameters. " alt="" coords="5,5,160,32"/>
+<area shape="rect" id="node2" href="$classAgentModel.html" title="The agent model main class. " alt="" coords="208,5,299,32"/>
+</map>
