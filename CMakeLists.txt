@@ -9,6 +9,15 @@ option(CREATE_DOXYGEN_TARGET "Creates the doxygen documentation if set." OFF)
 option(BUILD_WITH_INJECTION "Building the agent model with injection functionality." ON)
 
 
+# add ./cmake to CMAKE_MODULE_PATH
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
+
+# load modules
+include(ModuleGtest)
+include(ModuleCoverage)
+include(ModuleVehicleModel)
+
+
 # documentation
 if (CREATE_DOXYGEN_TARGET)
 

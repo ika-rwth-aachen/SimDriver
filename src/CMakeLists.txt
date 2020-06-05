@@ -17,6 +17,7 @@ endif (BUILD_WITH_INJECTION)
 # define target
 add_library(agent_model STATIC
         AgentModel.cpp
+        AgentController.cpp
         model_collection.cpp
         ${INJECTION_SRC})
 
