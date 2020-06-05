@@ -23,5 +23,6 @@ jobs:
       run: cd build_lib && echo $(make help) && make doxygen
     - name: debug doc
       run: |
-        echo $(ls -la)
+        sudo apt-get install tree 
+        echo $(tree -d -L 4)
       
