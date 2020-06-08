@@ -150,7 +150,7 @@ Last, the lane width of the ego lane and its left and right neighbor has to be s
 
 In Fig. 1 an example for each entry of one horizon knot is illustrated. 
 
-![Horizon Sketch](resources/doc/img/horizonSketch.svg)
+<img src="../resources/doc/img/horizonSketch.svg" width="750"/>
 
 *Fig 1: Horizon sketch*
 
