@@ -5,3 +5,7 @@
 A responsive driver model for traffic simulations to create exact and closed-loop microscopic traffic scenarios.
 
 `Detailed description coming soon`
+
+## Documentation
+
+A detailed API documentation can be found [here](https://ika-rwth-aachen.github.io/SimDriver/).
