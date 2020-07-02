@@ -183,7 +183,7 @@ namespace agent_model {
             double fs = std::isinf(_startPosition) ? 0.0 : agent_model::scale(_actualPosition, _endPosition, _startPosition, _delta);
 
             // maximum
-            return std::max(ft, fs);
+            return (std::max)(ft, fs);
 
         }
 

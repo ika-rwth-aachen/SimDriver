@@ -182,7 +182,7 @@ namespace agent_model {
             // init
             double dsMin = INFINITY;
             double interval = INFINITY;
-            unsigned long id = std::numeric_limits<unsigned long>::max();
+            unsigned long id = (std::numeric_limits<unsigned long>::max)();
 
             // iterate over elements
             for(auto &ke : _elements) {

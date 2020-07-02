@@ -245,7 +245,7 @@ namespace agent_model {
             for (unsigned int i = i0; i <= i1; ++i) {
 
                 // get speed and s
-                auto v0 = std::min(vMin, getSpeedAt(i));
+                auto v0 = (std::min)(vMin, getSpeedAt(i));
                 auto s = _elements.at(i).s;
 
                 // sum up with scaled factor
@@ -279,7 +279,7 @@ namespace agent_model {
 
             // get speed at index
             auto &e = _elements.at(i);
-            return std::min(std::min(e.vCont, e.vRule), _vMax);
+            return (std::min)((std::min)(e.vCont, e.vRule), _vMax);
 
         }
 

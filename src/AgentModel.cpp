@@ -111,7 +111,8 @@ void AgentModel::step(double simulationTime) {
     consciousVelocity();                // done: Test 9.1, 9.2, 9.3
     consciousStop();                    // done: Test 3.3b, 3.3c
     consciousFollow();                  // done: Test 8.1, 8.2, 8.3
-    consciousLaneChange();              // open
+    //consciousLaneChange();              // open
+	_state.conscious.lateral.paths[0].factor = 1;
     consciousLateralOffset();           // done: Test 7.3
     consciousReferencePoints();         // done: Test 7.1, 7.2, 7.3, 7.4
 
@@ -129,7 +130,7 @@ void AgentModel::step(double simulationTime) {
     double aRes = _param.velocity.a * (1.0 - rSpeed - rStop - rFollow);
 
     // set desired values
-    _state.subconscious.a     = aRes;           // done: Test 1.3
+    _state.subconscious.a     = std::min(std::max(-10.0, aRes), 10.0);           // done: Test 1.3
     _state.subconscious.kappa = kappa;          // done: Test 4.1, 4.2
     _state.subconscious.pedal = pedal;          // done: Test 1.4
     _state.subconscious.steering = INFINITY;
@@ -399,7 +400,7 @@ void AgentModel::consciousFollow() {
     for (unsigned long i = 0; i < agent_model::NOT; ++i) {
 
         // ignore non-relevant targets (, ds < 0, other lane)
-        if (std::isinf(t[i].ds) || t[i].ds < 0.0 || t[i].lane != 0)
+        if (t[i].id == 0 || std::isinf(t[i].ds) || t[i].ds < 0.0 || t[i].lane != 0)
             continue;
 
         // check if distance is smaller
