@@ -8,4 +8,5 @@ A responsive driver model for traffic simulations to create exact and closed-loo
 
 ## Documentation
 
-A detailed API documentation can be found [here](https://ika-rwth-aachen.github.io/SimDriver/).
+* Capabilities are described [here](src/README.md)
+* A detailed API documentation can be found [here](https://ika-rwth-aachen.github.io/SimDriver/).
