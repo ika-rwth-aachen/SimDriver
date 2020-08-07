@@ -53,6 +53,9 @@ namespace agent_model {
     struct Position {
         double x; //!< The x ordinate. (in *m*)
         double y; //!< The y ordinate. (in *m*)
+        Position(): x(0.0), y(0.0) {}
+        Position(double pX, double pY) : x(pX), y(pY) {}
+
     };
 
     /*!< A 2D position with motion and a influence factor. */
