@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 # options
 option(CREATE_DOXYGEN_TARGET "Creates the doxygen documentation if set." OFF)
-option(BUILD_WITH_INJECTION "Building the agent model with injection functionality." ON)
+option(BUILD_WITH_INJECTION "Building the agent model with injection functionality." OFF)
 
 
 # documentation
