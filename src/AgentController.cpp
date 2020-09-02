@@ -23,89 +23,74 @@
 
 
 #include "AgentController.h"
-
-#include <stdexcept>
 #include <algorithm>
-#include <cmath>
-#include "AgentController.h"
 
 bool AgentController::step(double dt) {
 
-    // check if value is set
-    if(_target == nullptr)
-        return false;
-
-    // calculate error (P)
-    auto _u = *_target - *_value;
-
-    if(std::isinf(_u))
-        throw std::runtime_error("Input value is not finite.");
-
-    // calculate integral (I)
-    in += (u + _u) * dt;
-
-    // calculate derivative (D)
-    auto der = _reset ? 0.0 : (_u - u) / dt;
-    u = _u;
-
-    // unset reset flag
-    _reset = false;
-
-    // calculate controller change
-    auto dy = k_P * u + k_I * in + k_D * der;
-
-    // apply desired controller state
-    if(_offset != nullptr && !std::isinf(*_offset)) {
-
-        // change controller value
-        dy = (*_offset - *_y) * o_P;
-
-        // reset controller
-        reset();
-
-    }
+    // calculate gained error
+    auto dyP = k_P * (*targetP - *actualP);
+    auto dyI = k_I * (*targetI - *actualI);
+    auto dyD = k_D * (*targetD - *actualD);
+    auto dyA = k_A * _filter.value(*preValue);
+    auto dyO = *offset;
 
     // limit change of controller
-    dy = std::min(_maxChange, std::max(-_maxChange, dy));
-
-    // integrate
-    *_y = std::max(_range[0], std::min(_range[1], *_y + dy * dt));
+    *output = std::min(this->range[1], std::max(this->range[0], dyP + dyI + dyD + dyA + dyO));
 
     return true;
 
 }
 
-void AgentController::reset() {
 
-    in = 0.0;
-    _reset = true;
+void AgentController::setOffset(double *off) {
 
-}
-
-
-void AgentController::setVariables(double *value, double *target, double *output, double *offset) {
-
-    this->_value = value;
-    this->_target = target;
-    this->_offset = offset;
-    _y = output;
+    this->offset = off;
 
 }
 
 
-void AgentController::setParameters(double k_p, double k_i, double k_d, double o_p) {
+void AgentController::setAnticipation(double *value, double k, unsigned int filterLen) {
 
-    k_P = k_p;
-    k_I = k_i;
-    k_D = k_d;
-    o_P = o_p;
+    this->preValue = value;
+    this->k_A = k;
+
+    // init filter
+    this->_filter.init(filterLen);
 
 }
 
-void AgentController::setRange(double lower, double upper, double maxChange) {
 
-    this->_range[0] = lower;
-    this->_range[1] = upper;
-    this->_maxChange = maxChange;
+void AgentController::setProportionalCompensation(double *actual, double *target, double k) {
+
+    this->actualP = actual;
+    this->targetP = target;
+    this->k_P = k;
+
+}
+
+
+void AgentController::setIntegralCompensation(double *actual, double *target, double k) {
+
+    this->actualI = actual;
+    this->targetI = target;
+    this->k_I = k;
+
+}
+
+
+void AgentController::setDerivativeCompensation(double *actual, double *target, double k) {
+
+    this->actualD = actual;
+    this->targetD = target;
+    this->k_D = k;
+
+}
+
+
+void AgentController::setOutput(double *out, double max, double min) {
+
+    this->output = out;
+    this->range[0] = min;
+    this->range[1] = max;
 
 }

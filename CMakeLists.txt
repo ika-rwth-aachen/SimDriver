@@ -13,9 +13,8 @@ option(BUILD_WITH_INJECTION "Building the agent model with injection functionali
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
 
 # load modules
-include(ModuleGtest)
 include(ModuleCoverage)
-include(ModuleVehicleModel)
+include(ModuleGtest)
 
 
 # documentation

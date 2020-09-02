@@ -1,5 +1,4 @@
 // Copyright (c) 2020 Jens Klimke <jens.klimke@rwth-aachen.de>. All rights reserved.
-//  > provided for the ika SimDriver project
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -46,8 +45,7 @@ public:
     struct Input {
         double steer = 0.0; // The steering input [-1..1] (in *-*)
         double pedal = 0.0; // The pedal input [-1..1] (in *-*)
-        Vector2 slope = {0.0, 0.0}; // The slope angle of the road (in *rad*) TODO: update in interface
-        Vector2 windSpeed = {0.0, 0.0}; // The wind speed (in *m/s*) TODO: update in interface
+        double slope = 0.0; // The slope agle of the road (in *rad*)
     };
 
     /** A class to store the states. */
@@ -69,7 +67,7 @@ public:
     struct Parameters {
         double steerTransmission = 0.5; // The steering transmission (input.steer -> state.delta) (in *-*)
         double wheelBase = 3.0; // The wheel base (in *m*)
-        Vector2 cwA = {0.6, 1.2}; // The cw parameters multiplied with the front and side area (in *m^2*) TODO: update in interface
+        double cwA = 0.6; // The cw parameter multiplied with the front area (in *m^2*)
         double mass = 1.5e3; // The mass (in *kg*)
         double powerMax = 1.0e5; // Maximum drive power (in *W*)
         double forceMax = 1.5e4; // Maximum drive force (in *N*)
@@ -102,8 +100,7 @@ public:
     void reset();
 
 
-    /**
-     * Performs a simulation step
+    /** performs a simulation step
      * @param timeStepSize The simulation time step size
      */
     bool step(double timeStepSize);

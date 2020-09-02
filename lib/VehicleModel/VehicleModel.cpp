@@ -1,5 +1,4 @@
 // Copyright (c) 2019-2020 Jens Klimke <jens.klimke@rwth-aachen.de>
-//  > provided for the ika SimDriver project
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -53,6 +52,7 @@ void VehicleModel::reset() {
     state.force = 0.0;
 
     // set inputs
+    input.slope = 0.0;
     input.pedal = 0.0;
     input.steer = 0.0;
 
@@ -66,21 +66,13 @@ bool VehicleModel::step(double timeStepSize) {
     auto p   = &parameters;
     auto st  = &state;
 
+    // calculate wheel steer angle and curvature
+    st->delta = p->steerTransmission * input.steer;
+    st->kappa = st->delta / p->wheelBase;
+
     // calculate distance and velocity
     st->ds = std::max(0.0, st->v * dt + 0.5 * st->a * dt * dt);
     st->v = std::max(0.0, st->v + st->a * dt);
-
-    // calculate wheel steer angle and ideal curvature
-    st->delta = p->steerTransmission * input.steer;
-    double kappa = st->delta / p->wheelBase;
-
-    // calculate lateral acceleration
-    auto aAirLat   = 0.5 * RHO_AIR * p->cwA.y * (input.windSpeed.y * input.windSpeed.y) / p->mass;
-    auto aSlopeLat = sin(input.slope.y) * G_ACC; // cross slope acceleration
-    st->ay = st->kappa * st->v * st->v + aSlopeLat + aAirLat;
-
-    // calculate corrected curvature
-    st->kappa = kappa; // TODO: correct this value
 
     // calculate position
     st->s += st->ds;
@@ -91,16 +83,21 @@ bool VehicleModel::step(double timeStepSize) {
     st->dPsi = st->v * st->kappa;
     st->psi += st->dPsi * dt;
 
+    // squared velocity
+    auto v2 = st->v * st->v;
+
+    // coefficients
+    auto airCoeff = 0.5 * RHO_AIR * p->cwA;
+    auto rollCoeff = p->rollCoefficient[0] + p->rollCoefficient[1] * st->v + p->rollCoefficient[2] * v2;
 
     // limit power and gas pedal
     auto throttle = std::max(input.pedal, 0.0) * (1.0 - p->idle) + p->idle;
 
     // calculate accelerations
-    auto vRel = st->v - input.windSpeed.x;
-    auto aAir   = 0.5 * RHO_AIR * p->cwA.x * (vRel * vRel) / p->mass;
-    auto aSlope = sin(input.slope.x) * G_ACC;
-    auto aGround = cos(input.slope.x) * G_ACC;
-    auto aRoll  = (p->rollCoefficient[0] + p->rollCoefficient[1] * st->v + p->rollCoefficient[2] * st->v * st->v) * aGround;
+    auto aGround = cos(input.slope) * G_ACC;
+    auto aAir   = airCoeff * v2 / p->mass;
+    auto aRoll  = rollCoeff * aGround;
+    auto aSlope = sin(input.slope) * G_ACC;
     auto aBrake = aGround * std::min(input.pedal, 0.0);
 
     // calculate smooth force curve
@@ -113,8 +110,9 @@ bool VehicleModel::step(double timeStepSize) {
             ? (F0 + _x * _x * (4.0 * F1 -  3.0 * F0) + _x * _x * _x * (2.0 * F0 - 3.0 * F1))    // low speed
             : p->powerMax / st->v;                                                              // high speed
 
-    // calculate longitudinal acceleration
+    // calculate acceleration
     st->a  = -aRoll - aAir - aSlope + aBrake + throttle * st->force / p->mass;
+    st->ay = st->kappa * st->v * st->v;
 
     // unset acceleration, when standing
     if(st->v == 0.0 && st->a < 0.0)

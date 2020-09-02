@@ -11,4 +11,7 @@ if (SIMDRIVER_BUILD_VEHICLE_MODEL)
     # add subdirectory
     add_subdirectory(${PROJECT_SOURCE_DIR}/lib/VehicleModel)
 
+    # set a few variables
+    set(VEHICLE_MODEL_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/lib/VehicleModel)
+
 endif (SIMDRIVER_BUILD_VEHICLE_MODEL)

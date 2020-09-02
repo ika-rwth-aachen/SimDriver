@@ -19,8 +19,6 @@ The model works best with a maximum time step size of 0.01 or less (100 Hz updat
 
 ## The pedal and steering controller
 
-_TODO: move to src folder README_
-
 To use the vehicle model by a driver model - or other intelligent driving functions -, you can use the controller class `PrimaryController` to generate the input based on a target value (e.g. desired acceleration, desired yaw rate, desired curvature, etc.). 
 
 The controller can basically be used as the vehicle model (`reset()` and `step()`). However, the setup is slightly different:

@@ -26,7 +26,6 @@
 #ifndef SIMDRIVER_FILTER_H
 #define SIMDRIVER_FILTER_H
 
-#include <deque>
 #include <vector>
 
 namespace agent_model {

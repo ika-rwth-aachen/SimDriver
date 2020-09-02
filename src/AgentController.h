@@ -25,40 +25,34 @@
 #ifndef SIMDRIVER_AGENTCONTROLLER_H
 #define SIMDRIVER_AGENTCONTROLLER_H
 
+#include "Filter.h"
+
 
 class AgentController {
 
 protected:
 
+    double *actualP = nullptr; //!< The compensatory proportional actual value
+    double *targetP = nullptr; //!< The compensatory proportional target value
+    double *actualI = nullptr; //!< The compensatory integral actual value
+    double *targetI = nullptr; //!< The compensatory integral target value
+    double *actualD = nullptr; //!< The compensatory derivative actual value
+    double *targetD = nullptr; //!< The compensatory derivative target value
 
-protected:
+    double *preValue = nullptr; //!< The anticipatory pre-controlled value
+    double *offset   = nullptr; //!< The offset value
+    double *output   = nullptr; //!< The output value
 
-    double *_value  = nullptr; //!< the actual value
-    double *_target = nullptr; //!< the target value
-    double *_offset = nullptr; //!< an offset to be controlled directly
-    double *_y      = nullptr; //!< the output value
+    double k_P = 0.0; //!< Proportional parameter for compensation
+    double k_I = 0.0; //!< Integral parameter for compensation
+    double k_D = 0.0; //!< Derivative parameter for compensation
+    double k_A = 1.0; //!< Proportional parameter for anticipation
 
-    double in = 0.0; //!< the integral error
-    double u  = 0.0; //!< the error
-
-    double k_P = 0.0; //!< proportional parameter for compensation
-    double k_I = 0.0; //!< integral parameter for compensation
-    double k_D = 0.0; //!< derivative parameter for compensation
-    double o_P = 1.0; //!< proportional parameter for compensation
-
-    double _range[2]  = {-1.0, 1.0}; //!< the valid range of the output value
-    double _maxChange = 1.0;         //!< the maximum change of the control value (derivative of output value)
-
-    bool _reset = false;  //!< reset flag
+    double range[2]  = {-1.0, 1.0}; //!< The valid range of the output value
+    agent_model::Filter _filter{}; //!< Filter container for the anticipatory control
 
 
 public:
-
-
-    /**
-     * Reset the controller states (except the output value)
-     */
-    void reset();
 
 
     /**
@@ -67,34 +61,56 @@ public:
      */
     bool step(double timeStepSize);
 
-
     /**
-     * Set the controller variables
-     * @param value The actual value
-     * @param target The desired value
-     * @param output The output value
-     * @param offset An offset added to the output
+     * Sets the offset value
+     * @param offset Offset value
      */
-    void setVariables(double *value, double *target, double *output, double *offset = nullptr);
+    void setOffset(double *offset);
 
 
     /**
-     * Sets the parameters
-     * @param k_p Proportional parameter
-     * @param k_i Integral parameter
-     * @param k_d Derivative parameter
-     * @param o_p Offset controller proportional parameter
+     * Sets the anticipation controller variable
+     * @param value Pre-control value
+     * @param k Gain parameter
+     * @param filterLength Anticipation filter length
      */
-    void setParameters(double k_p, double k_i, double k_d, double o_p = 1.0);
+    void setAnticipation(double *value, double k, unsigned int filterLength = 1.0);
 
 
     /**
-     * Sets the range of the output value
-     * @param lower Lower limit
-     * @param upper Upper limit
-     * @param macChange The maximum change of the output value
+     * Sets the compensatory proportional controller variables
+     * @param actual Actual value
+     * @param target Target value
+     * @param k Gain parameter
      */
-    void setRange(double lower, double upper, double maxChange);
+    void setProportionalCompensation(double *actual, double *target, double k);
+
+
+    /**
+     * Sets the compensatory integral controller variables
+     * @param actual Actual value
+     * @param target Target value
+     * @param k Gain parameter
+     */
+    void setIntegralCompensation(double *actual, double *target, double k);
+
+
+    /**
+     * Sets the compensatory derivative controller variables
+     * @param actual Actual value
+     * @param target Target value
+     * @param k Gain parameter
+     */
+    void setDerivativeCompensation(double *actual, double *target, double k);
+
+
+    /**
+     * Sets the output variable and optionally the maximum and minimum value
+     * @param output Output variable
+     * @param max Maximum value
+     * @param min Minimum value
+     */
+    void setOutput(double *output, double max = 1.0, double min = -1.0);
 
 
 

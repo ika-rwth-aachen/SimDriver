@@ -1,2 +1,2 @@
 # add test folders
-add_subdirectory(VehicleModel)
+add_subdirectory(VehicleModelTest)

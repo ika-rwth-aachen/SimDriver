@@ -27,12 +27,15 @@
 
 #include <gtest/gtest.h>
 #include <VehicleModel/VehicleModel.h>
+#include <Logging/Logger.h>
 #include <cmath>
 
 
 class VehicleModelTest : public ::testing::Test, public VehicleModel {
 
 public:
+
+    Logger *logger = nullptr;
 
     VehicleModelTest() = default;
     ~VehicleModelTest() override = default;
@@ -56,9 +59,15 @@ public:
         parameters.driverPosition.x   = 0.5;
         parameters.driverPosition.y   = 0.5;
 
+        // reset vehicle model
+        reset();
+
     }
 
     void run(double endTime = 1000.0) {
+
+        // logging
+        createLog();
 
         // init
         double timeStepSize = 0.01;
@@ -70,10 +79,33 @@ public:
             // step
             step(timeStepSize);
 
+            // write log data
+            this->logger->write(t);
+
             // increase time step
             t += timeStepSize;
 
         } while(t < endTime);
+
+        // delete logger
+        delete this->logger;
+
+    }
+
+
+    void createLog() {
+
+        // get file name for logging
+        auto name = ::testing::UnitTest::GetInstance()->current_test_info()->name();
+        std::string s{"/Users/jens/Repositories/SimDriver/test/VehicleModel/log/"};
+        s += name;
+        s += ".json";
+
+        // create logger
+        this->logger = new Logger(s);
+        this->logger->registerValue("x", &this->state.position.x);
+        this->logger->registerValue("y", &this->state.position.y);
+        this->logger->registerValue("v", &this->state.v);
 
     }
 
