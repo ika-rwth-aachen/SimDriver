@@ -30,10 +30,15 @@
 #include <Logging/Logger.h>
 #include <cmath>
 
+#define EPS_VELOCITY 1e-3
+#define EPS_ACCELERATION 1e-4
 
 class VehicleModelTest : public ::testing::Test, public VehicleModel {
 
 public:
+
+    double _vMax  = 250.0 / 3.6;
+    double _vIdle = 4.0;
 
     Logger *logger = nullptr;
 
@@ -44,23 +49,33 @@ public:
     void SetUp() override {
 
         // set vehicle parameters
-        parameters.steerTransmission  = 0.5;
-        parameters.wheelBase          = 3.0;
-        parameters.cwA                = {0.6, 1.2};
-        parameters.mass               = 1.5e3;
-        parameters.powerMax           = 1.0e5;
-        parameters.forceMax           = 1.5e4;
-        parameters.idle               = 0.05;
-        parameters.rollCoefficient[0] = 4.0 * 9.91e-3;
-        parameters.rollCoefficient[1] = 4.0 * 1.95e-5;
-        parameters.rollCoefficient[2] = 4.0 * 1.76e-9;
-        parameters.size.x             = 5.0;
-        parameters.size.y             = 2.2;
-        parameters.driverPosition.x   = 0.5;
-        parameters.driverPosition.y   = 0.5;
+        parameters.maxWheelAngle = 30.0 * M_PI / 180.0;
+        parameters.wheelBase = 3.0;
+        parameters.maxDriveAcc = 10.0;
+        parameters.maxBrakeAcc = 10.0;
+        parameters.sideDrift = 0.0;
+
+        // set long parameters
+        this->setParametersByVelocities(_vMax, 2.0, _vIdle);
 
         // reset vehicle model
         reset();
+
+    }
+
+
+    void setParametersByVelocities(double vLimit, double vNomial, double vIdle) {
+
+        // set max. relative drive power
+        parameters.maxRelDrivePower = parameters.maxDriveAcc * vNomial;
+
+        // set external acceleration parameters
+        parameters.longExternalAcc[0] = 0.0;
+        parameters.longExternalAcc[1] = 0.0;
+        parameters.longExternalAcc[2] = parameters.maxRelDrivePower / (vLimit * vLimit * vLimit);
+
+        // set idle pedal value
+        parameters.idlePedal = parameters.longExternalAcc[2] * (vIdle * vIdle * vIdle) / parameters.maxRelDrivePower;
 
     }
 
@@ -96,13 +111,11 @@ public:
     void createLog() {
 
         // get file name for logging
-        auto name = ::testing::UnitTest::GetInstance()->current_test_info()->name();
-        std::string s{"/Users/jens/Repositories/SimDriver/test/VehicleModel/log/"};
-        s += name;
-        s += ".json";
+        auto name = std::string(::testing::UnitTest::GetInstance()->current_test_info()->name());
+        name += ".json";
 
         // create logger
-        this->logger = new Logger(s);
+        this->logger = new Logger(name);
         this->logger->registerValue("x", &this->state.position.x);
         this->logger->registerValue("y", &this->state.position.y);
         this->logger->registerValue("v", &this->state.v);
@@ -118,58 +131,28 @@ TEST_F(VehicleModelTest, MaxSpeed) {
     input.pedal = 1.0;
     input.steer = 0.0;
 
-    // set parameters
-    parameters.rollCoefficient[0] = 0.0;
-    parameters.rollCoefficient[1] = 0.0;
-    parameters.rollCoefficient[2] = 0.0;
-
-    // calculates KPIs of the vehicle model
-    auto cwa = 0.5 * 1.2041 * parameters.cwA.x;
-    auto rhs = std::pow(parameters.powerMax / cwa, 1.0 / 3.0);
-
     // run simulation
     run();
 
-    EXPECT_NEAR(0.0, state.a, 1e-4);
-    EXPECT_NEAR(rhs, state.v, 1e-4);
+    // check results
+    EXPECT_NEAR(  0.0, state.a, EPS_ACCELERATION);
+    EXPECT_NEAR(_vMax, state.v, EPS_VELOCITY);
 
 }
 
 
-TEST_F(VehicleModelTest, PushingWind) {
+TEST_F(VehicleModelTest, IdleSpeed) {
 
     // set pedal and steering value
     input.pedal = 0.0;
     input.steer = 0.0;
-    input.slope = {0.0, 0.0};
-    input.windSpeed = {10.0, 0.0};
 
     // run simulation
     run();
 
-    EXPECT_NEAR(    0.0, state.a,  1e-3);
-    EXPECT_NEAR(    8.0, state.v,  1.0);
-    EXPECT_NEAR(    0.0, state.ds, 1.0);
-    EXPECT_NEAR( 7448.0, state.s,  1.0);
-
-}
-
-
-TEST_F(VehicleModelTest, MaxSpeedWithStdParams) {
-
-    // set pedal and steering value
-    input.pedal = 1.0;
-    input.steer = 0.0;
-    input.slope = {0.1, 0.0};
-    input.windSpeed = {12.0, 0.0};
-
-    // run simulation
-    run();
-
-    EXPECT_NEAR(    0.0, state.a,  1e-3);
-    EXPECT_NEAR(   41.5, state.v,  1.0);
-    EXPECT_NEAR(    0.0, state.ds, 1.0);
-    EXPECT_NEAR(41016.0, state.s,  1.0);
+    // check results
+    EXPECT_NEAR(   0.0, state.a, EPS_ACCELERATION);
+    EXPECT_NEAR(_vIdle, state.v, EPS_VELOCITY);
 
 }
 

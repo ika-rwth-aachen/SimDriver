@@ -43,67 +43,69 @@ public:
 
     /** A class to store the input. */
     struct Input {
-        double steer = 0.0; // The steering input [-1..1] (in *-*)
-        double pedal = 0.0; // The pedal input [-1..1] (in *-*)
-        double slope = 0.0; // The slope agle of the road (in *rad*)
+        double steer = 0.0;     // The steering input [-1..1] (in -)
+        double pedal = 0.0;     // The pedal input [-1..1] (in -)
     };
 
     /** A class to store the states. */
     struct State {
-        Vector2 position = {0.0, 0.0}; // The actual position (in *m*)
-        double ds = 0.0; // The distance travelled in the current time step (in *m*)
-        double s = 0.0; // The distance travelled since the last reset (in *m*)
-        double v = 0.0; // The actual velocity (in *m/s*)
-        double a = 0.0; // The actual acceleration (in *m/s^2*)
-        double psi = 0.0; // The actual yaw angle (in *rad*)
-        double dPsi = 0.0; // The actual yaw rate (in *rad/s*)
-        double delta = 0.0; // The actual wheel steer angle (in *rad*)
-        double kappa = 0.0; // The actual curvature (in *1/m*)
-        double ay = 0.0; // The actual lateral acceleration (in *m/s^2*)
-        double force = 0.0; // The actual body force (in *N*)
+        Vector2 position = {0.0, 0.0};  // The actual position (in *m*)
+        double ds = 0.0;                // The distance travelled in the current time step (in *m*)
+        double s = 0.0;                 // The distance travelled since the last reset (in *m*)
+        double v = 0.0;                 // The actual velocity (in *m/s*)
+        double a = 0.0;                 // The actual acceleration (in *m/s^2*)
+        double psi = 0.0;               // The actual yaw angle (in *rad*)
+        double dPsi = 0.0;              // The actual yaw rate (in *rad/s*)
+        double delta = 0.0;             // The actual wheel steer angle (in *rad*)
+        double kappa = 0.0;             // The actual curvature (in *1/m*)
     };
 
     /** A class to store the parameters. */
     struct Parameters {
-        double steerTransmission = 0.5; // The steering transmission (input.steer -> state.delta) (in *-*)
-        double wheelBase = 3.0; // The wheel base (in *m*)
-        double cwA = 0.6; // The cw parameter multiplied with the front area (in *m^2*)
-        double mass = 1.5e3; // The mass (in *kg*)
-        double powerMax = 1.0e5; // Maximum drive power (in *W*)
-        double forceMax = 1.5e4; // Maximum drive force (in *N*)
-        double idle = 0.1; // The ratio of maximum power at no pedal (in *-*)
-        double rollCoefficient[3] = {4.0 * 9.91e-3, 4.0 * 1.95e-5, 4.0 * 1.76e-9}; // The roll coefficients (polynomial parameters of v^0, v^1, v^2) (in *Unit*)
-        Vector2 size = {5.0, 2.2}; // The size of the vehicle
-        Vector2 driverPosition = {0.5, 0.5}; // The position of the driver related to the center
+        double maxWheelAngle{};         // Maximum steering angle (equal to virtual steering transmission, in *rad*)
+        double wheelBase{};             // Wheel base (in *m*)
+        double maxRelDrivePower{};      // Maximum relative drive power (in *W/kg* or *m^2/s^3*)
+        double maxDriveAcc{};           // Maximum drive acceleration (in *m/s^2*)
+        double maxBrakeAcc{};           // Maximum brake acceleration (in *m/s^2*)
+        double idlePedal{};             // Pedal when no pedal input (in -)
+        double longExternalAcc[3]{};    // Longitudinal long. acceleration (polynomial parameters of v^0, v^1, v^2) (in -)
+        double sideDrift{};             // The side drift factor (ratio of lateral to longitudinal movement, in -)
     };
 
 
 
 protected:
 
-    Input input{}; // The state of the model.
-    State state{}; // The state of the model.
-    Parameters parameters{}; // The parameters of the model.
+    Input input{};              // The state of the model.
+    State state{};              // The state of the model.
+    Parameters parameters{};    // The parameters of the model.
 
 
 public:
 
-    /** Default constructor */
+    /**
+     * Default constructor
+     */
     VehicleModel() = default;
 
 
-    /** Default destructor */
+    /**
+     * Default destructor
+     */
     virtual ~VehicleModel() = default;
 
 
-    /** This method resets the vehicle memory */
+    /**
+     * This method resets the vehicle memory
+     */
     void reset();
 
 
-    /** performs a simulation step
+    /**
+     * Performs a simulation step
      * @param timeStepSize The simulation time step size
      */
-    bool step(double timeStepSize);
+    void step(double timeStepSize);
 
 
     /**

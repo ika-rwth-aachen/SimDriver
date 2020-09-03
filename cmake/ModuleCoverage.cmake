@@ -5,9 +5,9 @@
 # TODO: set this automatically when cmake mode debug is set
 
 # option
-option(SIMDRIVER_ENABLE_COVERAGE "Enables the coverage check of the module" OFF)
+option(ENABLE_COVERAGE "Enables the coverage check of the module" OFF)
 
-if (SIMDRIVER_ENABLE_COVERAGE)
+if (ENABLE_COVERAGE)
 
     # message
     message(STATUS "Coverage option is enabled")
@@ -20,4 +20,4 @@ if (SIMDRIVER_ENABLE_COVERAGE)
         set(CMAKE_CXX_FLAGS "-fprofile-instr-generate -fcoverage-mapping")
     endif ()
 
-endif (SIMDRIVER_ENABLE_COVERAGE)
+endif (ENABLE_COVERAGE)

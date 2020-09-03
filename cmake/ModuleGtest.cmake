@@ -7,11 +7,7 @@
 # * add a CMakeLists.txt and use add_gtest(...) macro
 # ------------------------------------------------------------------------------
 
-# options
-option(SIMDRIVER_BUILD_TESTS "Building the tests for the driver model (gtest must be installed)." OFF)
-option(SIMDRIVER_BUILD_GTEST_LIBRARY "Enables gtest to be built from the submodule" OFF)
-
-if (SIMDRIVER_BUILD_TESTS)
+if (BUILD_TESTING)
 
     # define macro
     macro(add_gtest TESTNAME)
@@ -42,14 +38,11 @@ if (SIMDRIVER_BUILD_TESTS)
     # message
     message(STATUS "Testing (gtest) enabled")
 
-    # gtest flag
-    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-
     # enable testing
     enable_testing()
 
     # switch (build or use installed lib)
-    if(SIMDRIVER_BUILD_GTEST_LIBRARY)
+    if(BUILD_GTEST_LIBRARY)
 
         # message
         message(STATUS "ATTENTION: gtest must be cloned into the lib folder (folder name gtest)")
@@ -66,9 +59,9 @@ if (SIMDRIVER_BUILD_TESTS)
         # find gtest
         find_package(GTest REQUIRED)
 
-    endif(SIMDRIVER_BUILD_GTEST_LIBRARY)
+    endif(BUILD_GTEST_LIBRARY)
 
     # add test folder
     add_subdirectory(${PROJECT_SOURCE_DIR}/test)
 
-endif (SIMDRIVER_BUILD_TESTS)
+endif (BUILD_TESTING)

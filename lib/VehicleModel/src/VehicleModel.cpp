@@ -48,81 +48,64 @@ void VehicleModel::reset() {
     state.dPsi  = 0.0;
     state.delta = 0.0;
     state.kappa = 0.0;
-    state.ay    = 0.0;
-    state.force = 0.0;
 
     // set inputs
-    input.slope = 0.0;
     input.pedal = 0.0;
     input.steer = 0.0;
 
 }
 
 
-bool VehicleModel::step(double timeStepSize) {
+void VehicleModel::step(double timeStepSize) {
 
     // short cuts
     auto &dt = timeStepSize;
     auto p   = &parameters;
-    auto st  = &state;
+    auto s  = &state;
+    auto i   = &input;
 
     // calculate wheel steer angle and curvature
-    st->delta = p->steerTransmission * input.steer;
-    st->kappa = st->delta / p->wheelBase;
+    s->delta = p->maxWheelAngle * i->steer;
+    s->kappa = s->delta / p->wheelBase;
 
     // calculate distance and velocity
-    st->ds = std::max(0.0, st->v * dt + 0.5 * st->a * dt * dt);
-    st->v = std::max(0.0, st->v + st->a * dt);
+    s->ds = std::max(0.0, s->v * dt + 0.5 * s->a * dt * dt);
+    s->v = std::max(0.0, s->v + s->a * dt);
 
     // calculate position
-    st->s += st->ds;
-    st->position.x += cos(st->psi) * st->ds;
-    st->position.y += sin(st->psi) * st->ds;
+    s->s += s->ds;
+    s->position.x += cos(s->psi) * s->ds - sin(s->psi) * s->ds * p->sideDrift;
+    s->position.y += sin(s->psi) * s->ds + cos(s->psi) * s->ds * p->sideDrift;
 
     // calculate yaw rate and yaw angle
-    st->dPsi = st->v * st->kappa;
-    st->psi += st->dPsi * dt;
+    s->dPsi = s->v * s->kappa;
+    s->psi += s->dPsi * dt;
 
-    // squared velocity
-    auto v2 = st->v * st->v;
+    // throttle value and brake value
+    auto throttle = std::max( 0.0, std::min(1.0, i->pedal * (1.0 - p->idlePedal) + p->idlePedal));
+    auto brake    = std::max(-1.0, std::min(0.0, i->pedal));
 
-    // coefficients
-    auto airCoeff = 0.5 * RHO_AIR * p->cwA;
-    auto rollCoeff = p->rollCoefficient[0] + p->rollCoefficient[1] * st->v + p->rollCoefficient[2] * v2;
-
-    // limit power and gas pedal
-    auto throttle = std::max(input.pedal, 0.0) * (1.0 - p->idle) + p->idle;
-
-    // calculate accelerations
-    auto aGround = cos(input.slope) * G_ACC;
-    auto aAir   = airCoeff * v2 / p->mass;
-    auto aRoll  = rollCoeff * aGround;
-    auto aSlope = sin(input.slope) * G_ACC;
-    auto aBrake = aGround * std::min(input.pedal, 0.0);
-
-    // calculate smooth force curve
-    double F0 = p->forceMax;
-    double F1 = p->powerMax * 0.1;  // / 10 m/s (low speed boundary)
-    double _x = st->v * 0.1;        // / 10 m/s (low speed boundary)
-
-    // calculate drive force
-    st->force = _x < 1.0
-            ? (F0 + _x * _x * (4.0 * F1 -  3.0 * F0) + _x * _x * _x * (2.0 * F0 - 3.0 * F1))    // low speed
-            : p->powerMax / st->v;                                                              // high speed
+    // calculate accelerations (external, drive, brake)
+    auto aLong = p->longExternalAcc[0] + p->longExternalAcc[1] * s->v + p->longExternalAcc[2] * s->v * s->v;
+    auto aAcc = throttle * std::min(p->maxDriveAcc, p->maxRelDrivePower / s->v);
+    auto aDec = brake * p->maxBrakeAcc;
 
     // calculate acceleration
-    st->a  = -aRoll - aAir - aSlope + aBrake + throttle * st->force / p->mass;
-    st->ay = st->kappa * st->v * st->v;
+    s->a = std::max(-G_ACC, std::min(G_ACC, -aDec + aAcc - aLong));
 
     // unset acceleration, when standing
-    if(st->v == 0.0 && st->a < 0.0)
-        st->a = 0.0;
-
-    return true;
+    if(s->v == 0.0 && s->a < 0.0)
+        s->a = 0.0;
 
 }
 
 VehicleModel::Input * VehicleModel::getInput() {
+
+    return &this->input;
+
+}
+
+const VehicleModel::Input * VehicleModel::getInput() const {
 
     return &this->input;
 
@@ -134,21 +117,15 @@ VehicleModel::State *VehicleModel::getState()  {
 
 }
 
-VehicleModel::Parameters *VehicleModel::getParameters() {
-
-    return &this->parameters;
-
-}
-
-const VehicleModel::Input * VehicleModel::getInput() const {
-
-    return &this->input;
-
-}
-
 const VehicleModel::State *VehicleModel::getState() const  {
 
     return &this->state;
+
+}
+
+VehicleModel::Parameters *VehicleModel::getParameters() {
+
+    return &this->parameters;
 
 }
 
