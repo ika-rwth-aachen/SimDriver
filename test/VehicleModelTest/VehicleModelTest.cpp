@@ -26,8 +26,8 @@
 #pragma ide diagnostic ignored "cert-err58-cpp"
 
 #include <gtest/gtest.h>
-#include <VehicleModel/VehicleModel.h>
-#include <Logging/Logger.h>
+#include <VehicleModel.h>
+#include <Logging/UDPLogger.h>
 #include <cmath>
 
 #define EPS_VELOCITY 1e-3
@@ -40,7 +40,7 @@ public:
     double _vMax  = 250.0 / 3.6;
     double _vIdle = 4.0;
 
-    Logger *logger = nullptr;
+    UDPLogger *logger = nullptr;
 
     VehicleModelTest() = default;
     ~VehicleModelTest() override = default;
@@ -87,6 +87,7 @@ public:
         // init
         double timeStepSize = 0.01;
         double t = 0.0;
+        unsigned long i = 0;
 
         // loop
         do {
@@ -95,10 +96,13 @@ public:
             step(timeStepSize);
 
             // write log data
-            this->logger->write(t);
+            if(i % 100 == 0)
+                this->logger->write(t);
 
             // increase time step
             t += timeStepSize;
+
+            ++i;
 
         } while(t < endTime);
 
@@ -110,12 +114,14 @@ public:
 
     void createLog() {
 
-        // get file name for logging
+        // create reset flag
         auto name = std::string(::testing::UnitTest::GetInstance()->current_test_info()->name());
-        name += ".json";
+        std::string reset = R"({"reset":")" + name + R"(","title":")" + name + R"(","maxSamplePoints":1000,"keys":["v"]})";
 
         // create logger
-        this->logger = new Logger(name);
+        this->logger = new UDPLogger("localhost", "3001");
+        this->logger->send(reset);
+        this->logger->registerValue("owner", &reset);
         this->logger->registerValue("x", &this->state.position.x);
         this->logger->registerValue("y", &this->state.position.y);
         this->logger->registerValue("v", &this->state.v);

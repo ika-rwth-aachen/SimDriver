@@ -27,13 +27,16 @@
 #include <map>
 #include <string>
 #include <cmath>
-#include <ostream>
+#include <iostream>
+#include <fstream>
 
 
 class Logger {
 
-
+    std::fstream _fstream;
     std::map<std::string, const double*> _values{};
+
+    bool _hasContent = false;
 
 
 public:
@@ -41,14 +44,28 @@ public:
 
     /**
      * Creates the container
+     * @param filename Filename of the log file
      */
-    Logger() = default;
+    explicit Logger(const std::string &filename) {
 
+        _fstream.open(filename, std::ios::out);
+        _hasContent = false;
+
+    }
 
     /**
      * Closes the container
      */
-    virtual ~Logger() = default;
+    ~Logger() {
+
+        // close brackets
+        if(_hasContent)
+            (_fstream) << "\n]" << std::endl;
+
+        // close fstream
+        _fstream.close();
+
+    }
 
 
     /**
@@ -69,30 +86,32 @@ public:
     /**
      * Writes the values to the stream
      * @param time Actual timestamp
-     * @param out Output stream
      */
-    void write(double time, std::ostream &out) {
+    void write(double time) {
 
         // save time and open object brackets
-        out << R"({"time":)" << time << ",";
+        (_fstream) << (_hasContent ? ",\n" : "[\n") << "\t" << R"({"time":)" << time << ",";
 
         // write data
         unsigned int i = 0;
         for(auto &p : _values) {
 
             // stream field name
-            out << (i++ == 0 ? "" : ",") << "\"" << p.first << "\":";
+            (_fstream) << (i++ == 0 ? "" : ",") << "\"" << p.first << "\":";
 
             // check for inf and nan
             if(std::isinf(*p.second) || std::isnan(*p.second))
-                out << "null";
+                (_fstream) << "null";
             else
-                out << *p.second;
+                (_fstream) << *p.second;
 
         }
 
         // close object brackets
-        out << "}";
+        (_fstream) << "}";
+
+        // save that data was already written
+        _hasContent = true;
 
     }
 

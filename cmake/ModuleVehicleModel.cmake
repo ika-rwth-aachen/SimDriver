@@ -1,7 +1,7 @@
 if (BUILD_VEHICLE_MODEL)
 
     # message
-    message(STATUS "Vehicle model option is enables")
+    message(STATUS "Vehicle model option is enabled")
 
     # set a few variables
     set(VEHICLE_MODEL_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/lib/VehicleModel/src)
