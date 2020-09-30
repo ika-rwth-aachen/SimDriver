@@ -60,4 +60,8 @@ endif(BUILD_WITH_INJECTION)
 
 
 # library code
+if(UNIX)
+    set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fPIC" )
+    set( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fPIC" )
+endif()
 add_subdirectory(src/)
