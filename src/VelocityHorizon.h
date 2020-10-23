@@ -289,7 +289,7 @@ namespace agent_model {
          * @param i Index of the point
          * @return The new point
          */
-        PredictionPoint newPoint(size_t i) {
+        PredictionPoint newPoint(size_t i) const {
 
             double s = _offset + (double) i;
             return PredictionPoint{i, s, INFINITY, INFINITY, INFINITY, s - 1.0};
