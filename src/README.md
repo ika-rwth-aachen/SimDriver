@@ -1,6 +1,37 @@
 # Model capabilities, behavior and features
 
-## Capability description
+## Capability Description
+
+### Basic Driving States
+
+| #   | State                             | Guidance Variable           |
+|-----|-----------------------------------|-----------------------------|
+| 1.  | Standing Still                    | $v = 0$                     |
+| 2.  | Keeping the Lane                  | $\Delta y = 0$              |
+| 3.  | Keeping a Desired Lateral Offset  | $\Delta y_\text{offset}$    |
+| 4.  | Keeping a Desired Velocity        | $v$                         |
+| 5.  | Following a Traffic Participant   | $\Delta s$, $\Delta v = 0$  |
+| 6.  | Passing Objects                   | $\Delta y_\text{object}$    |
+| 7.  | Overtake Traffic Participants     | $\Delta y$                  |
+
+
+### Basic Driving Transitions
+
+| #   | Transition                        | source | target | Guidance Variable             |
+|-----|-----------------------------------|--------|--------|-------------------------------|
+| 1.  | Stopping at a Desired Position    |        |        | $v = 0$ @ $s$                 |
+| 2.  | Speeding Up                       |        |        | $v$? $a$?                     |
+| 3.  | Changing the Speed (speed step)   |        |        | $v$ @ $s$                     |
+| 4.  | Approaching to Traffic Part.      |        |        | $\Delta v = 0$ @ $\Delta s$   |
+| 5.  | Changing Lane                     |        |        | $\Delta y = 0$ @ $s$          |
+
+* Continue here*
+
+- [ ] Avoiding a Temporary Conflict by Adapting Speed
+- [ ] Changing Lane
+- [ ] Stopping at a desired position
+
+### Detailed Capabilities
 
 - [x] 1. Holding the vehicle in standstill by using the _brake pedal_
 - [x] 2. Controlling an _desired acceleration_ by using _drive_ and _brake pedal_
@@ -18,7 +49,7 @@
 - [x] 14. Keeping a maximum allowed speed (defined by _speed rules_, e.g. speed limits)
 - [x] 15. Keeping a _maximum comfortable speed_ defined by a parameter
 - [x] 16. Adapting the speed predicatively according to the local speeds (12., 13., 14.)
-- [o] 17. Making _decision_ and _performing_ a lane change
+- [ ] 17. Making _decision_ and _performing_ a lane change
 - [x] 18. Making _decision_ to stop at stop signs
 - [ ] 19. Making _decision_ to slow down or stop due to a conflict ahead
 
