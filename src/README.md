@@ -5,7 +5,7 @@
 - [x] 1. Holding the vehicle in standstill by using the _brake pedal_
 - [x] 2. Controlling an _desired acceleration_ by using _drive_ and _brake pedal_
 - [x] 3. Controlling a _desired speed_
-- [x] 4. Controlling predictively a _desired speed_ in a given _distance_
+- [x] 4. Controlling predicatively a _desired speed_ in a given _distance_
 - [x] 5. Controlling the vehicle to stop within a _desired distance_
 - [x] 6. Controlling a _desired distance_ to a preceding vehicle
 - [x] 7. Controlling a _desired curvature_ by using the _steering_
@@ -17,7 +17,7 @@
 - [x] 13. Keeping a maximum comfortable speed in curves (depending on the _maximum lateral acceleration_)
 - [x] 14. Keeping a maximum allowed speed (defined by _speed rules_, e.g. speed limits)
 - [x] 15. Keeping a _maximum comfortable speed_ defined by a parameter
-- [x] 16. Adapting the speed predictively according to the local speeds (12., 13., 14.)
+- [x] 16. Adapting the speed predicatively according to the local speeds (12., 13., 14.)
 - [o] 17. Making _decision_ and _performing_ a lane change
 - [x] 18. Making _decision_ to stop at stop signs
 - [ ] 19. Making _decision_ to slow down or stop due to a conflict ahead
