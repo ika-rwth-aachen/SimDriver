@@ -1,8 +1,14 @@
-# Model capabilities, behavior and features
+# Driving Behavior, capabilities and features
 
-## Capability Description
+Driving behavior in this context describes the systematically structured ability of the agent model to move the virtual vehicle within the traffic. To structure the driving behavior, continuous driving states are defined.   
 
-### Basic Driving States
+## Driving Behavior
+
+Continuous driving states contain one or more reference variables (donges), which are controlled by the driver model. Command variables are static or variable according to changing driving situations. The model contains capabilities, which allow to keep the driving states according to the command variables. A driving state is considered stable as long as it does not have to be left.
+
+Transitions are defined between the continuous driving states, which are also implemented in the model via capabilities. Transitions serve to get from one continuous driving state to another continuous driving state.
+
+### Continuous Driving States
 
 | #   | State                             | Guidance Variable           |
 |-----|-----------------------------------|-----------------------------|
@@ -15,21 +21,22 @@
 | 7.  | Overtake Traffic Participants     | $\Delta y$                  |
 
 
-### Basic Driving Transitions
+### Driving Transitions
 
-| #   | Transition                        | source | target | Guidance Variable             |
-|-----|-----------------------------------|--------|--------|-------------------------------|
-| 1.  | Stopping at a Desired Position    |        |        | $v = 0$ @ $s$                 |
-| 2.  | Speeding Up                       |        |        | $v$? $a$?                     |
-| 3.  | Changing the Speed (speed step)   |        |        | $v$ @ $s$                     |
-| 4.  | Approaching to Traffic Part.      |        |        | $\Delta v = 0$ @ $\Delta s$   |
-| 5.  | Changing Lane                     |        |        | $\Delta y = 0$ @ $s$          |
-
-* Continue here*
-
-- [ ] Avoiding a Temporary Conflict by Adapting Speed
-- [ ] Changing Lane
-- [ ] Stopping at a desired position
+| #   | Transition                          | source | target | Guidance Variable             |
+|-----|-------------------------------------|--------|--------|-------------------------------|
+| 1.  | Stopping at a Desired Position      |        |        | $v = 0$ @ $s$                 |
+| 2.  | Speeding Up                         |        |        | $v$? $a$?                     |
+| 3.  | Changing the Speed (speed step)     |        |        | $v$ @ $s$                     |
+| 4.  | Approaching to Traffic Part.        |        |        | $\Delta v = 0$ @ $\Delta s$   |
+| 5.  | Avoid temporary conflicts           |        |        | $s$ @ $t$                     |
+| 6.  | Changing Lane                       |        |        | $y = 0$ @ $s$                 |
+| 7.  | Pulling Over                        |        |        | $y$ @ $s$                     |
+| 8.  | Merging In                          |        |        | $y = 0$ @ $s$                 |
+| 9.  | Pulling Out (for Overtaking)        |        |        | $y$                           |
+| 10. | Pulling In (from Overtaking)        |        |        | $y = 0$                       |
+| 11. | Pulling Out (for Passing)           |        |        | $\Delta y$                    |
+| 12. | Pulling In (from Passing)           |        |        | $y = 0$                       |
 
 ### Detailed Capabilities
 
