@@ -4,9 +4,6 @@
 # from: https://blog.jetbrains.com/clion/2019/10/clion-2019-3-eap-coverage-cmake-defaults-lldb/
 # TODO: set this automatically when cmake mode debug is set
 
-# option
-option(ENABLE_COVERAGE "Enables the coverage check of the module" OFF)
-
 if (ENABLE_COVERAGE)
 
     # message

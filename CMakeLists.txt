@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.5)
 
 # the project
 project(SimDriver VERSION 0.1)
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 
 # add ./cmake to CMAKE_MODULE_PATH
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/cmake" ${CMAKE_MODULE_PATH})
@@ -12,14 +12,12 @@ option(CREATE_DOXYGEN_TARGET "Creates the doxygen documentation if set." OFF)
 option(BUILD_TESTING "Building the tests of the driver model." OFF)
 option(BUILD_GTEST_LIBRARY "Enables gtest to be built from the submodule" OFF)
 option(ENABLE_COVERAGE "Builds the code with code coverage functionality." OFF)
-option(BUILD_VEHICLE_MODEL "Creates the target to build the vehicle model (is set to true, when testing is on)." ${BUILD_TESTING})
 option(BUILD_WITH_INJECTION "Builds the agent model with injection functionality." ON)
 
 # load modules
 include(ModuleDoxygen)
-include(ModuleGtest)
 include(ModuleCoverage)
-include(ModuleVehicleModel)
+include(ModuleGtest)
 include(ModuleInjection)
 
 # library code

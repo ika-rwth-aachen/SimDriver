@@ -1,4 +1,4 @@
-name: Build agent_model
+name: Build sim_driver
 
 on:
   push:
@@ -18,5 +18,5 @@ jobs:
     - name: setup cmake      
       run: mkdir build_lib && cd build_lib && cmake -G "Unix Makefiles" -DBUILD_WITH_INJECTION=ON -DCREATE_DOXYGEN_TARGET=OFF -DCMAKE_BUILD_TYPE=Debug ..
     - name: compile agent model
-      run: cd build_lib && echo $(ls) && make agent_model
+      run: cd build_lib && echo $(ls) && make sim_driver
    
