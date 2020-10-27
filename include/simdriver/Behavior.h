@@ -21,10 +21,10 @@
 // Created by Jens Klimke on 2019-03-23.
 // Contributors:
 //
-// AgentModel.h
+//
 
-#ifndef AGENT_MODEL_H
-#define AGENT_MODEL_H
+#ifndef SIM_DRIVER_BEHAVIOR_H
+#define SIM_DRIVER_BEHAVIOR_H
 
 #include "Interface.h"
 #include "utils/VelocityHorizon.h"
@@ -170,4 +170,4 @@ protected:
 };
 
 
-#endif // AGENT_MODEL_H
+#endif // SIM_DRIVER_BEHAVIOR_H

@@ -2,7 +2,7 @@
 # define target
 add_library(SimDriver STATIC
         Behavior.cpp
-        Controller.cpp
+        _Controller.cpp
         model_collection.cpp
         )
 

@@ -28,7 +28,7 @@
 #include "utils/Filter.h"
 
 
-class Controller {
+class _Controller {
 
 protected:
 

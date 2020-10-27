@@ -22,10 +22,10 @@
 //
 
 
-#include <SimDriver/Controller.h>
+#include <SimDriver/_Controller.h>
 #include <algorithm>
 
-bool Controller::step(double dt) {
+bool _Controller::step(double dt) {
 
     // calculate gained error
     auto dyP = k_P * (*targetP - *actualP);
@@ -42,14 +42,14 @@ bool Controller::step(double dt) {
 }
 
 
-void Controller::setOffset(double *off) {
+void _Controller::setOffset(double *off) {
 
     this->offset = off;
 
 }
 
 
-void Controller::setAnticipation(double *value, double k, unsigned int filterLen) {
+void _Controller::setAnticipation(double *value, double k, unsigned int filterLen) {
 
     this->preValue = value;
     this->k_A = k;
@@ -60,7 +60,7 @@ void Controller::setAnticipation(double *value, double k, unsigned int filterLen
 }
 
 
-void Controller::setProportionalCompensation(double *actual, double *target, double k) {
+void _Controller::setProportionalCompensation(double *actual, double *target, double k) {
 
     this->actualP = actual;
     this->targetP = target;
@@ -69,7 +69,7 @@ void Controller::setProportionalCompensation(double *actual, double *target, dou
 }
 
 
-void Controller::setIntegralCompensation(double *actual, double *target, double k) {
+void _Controller::setIntegralCompensation(double *actual, double *target, double k) {
 
     this->actualI = actual;
     this->targetI = target;
@@ -78,7 +78,7 @@ void Controller::setIntegralCompensation(double *actual, double *target, double 
 }
 
 
-void Controller::setDerivativeCompensation(double *actual, double *target, double k) {
+void _Controller::setDerivativeCompensation(double *actual, double *target, double k) {
 
     this->actualD = actual;
     this->targetD = target;
@@ -87,7 +87,7 @@ void Controller::setDerivativeCompensation(double *actual, double *target, doubl
 }
 
 
-void Controller::setOutput(double *out, double max, double min) {
+void _Controller::setOutput(double *out, double max, double min) {
 
     this->output = out;
     this->range[0] = min;

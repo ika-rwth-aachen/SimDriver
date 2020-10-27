@@ -24,9 +24,10 @@
 #include <string>
 #include <functional>
 #include <gtest/gtest.h>
-#include <simcore/Model.h>
-#include <simcore/traffic/BasicSimulation.h>
-#include <simcore/functions.h>
+#include <simdriver/Behavior.h>
+#include <simcore/ISynchronized.h>
+#include <simcore/utils/functions.h>
+#include <simtraffic/VehicleModelAdapter.h>
 #include "VehicleControllerAdapter.h"
 
 #ifndef SIM_DRIVER_AGENT_MODEL_ADAPTER_H
@@ -37,7 +38,7 @@
  * A abstract generic test class, setting a default set of parameters for the vehicle and driver model
  * @author Jens Klimke
  */
-struct AgentModelAdapter : public ::testing::Test, public Unit, public AgentModel, public sim::Model, public BasicSimulation {
+struct AgentModelAdapter : public ::testing::Test, public sim::traffic::VehicleModelAdapter {
 
     struct Scenario {
 

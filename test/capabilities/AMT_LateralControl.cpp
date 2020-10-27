@@ -24,7 +24,7 @@
 // AMT_LateralControl.cpp
 //
 
-#include <simcore/functions.h>
+#include <simcore/utils/functions.h>
 #include "AgentModelAdapter.h"
 
 /**

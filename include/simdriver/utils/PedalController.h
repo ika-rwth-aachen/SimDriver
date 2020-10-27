@@ -18,67 +18,48 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 // SOFTWARE.
 //
-// Created by Jens Klimke on 2020-03-11.
+// Created by Jens Klimke on 2020-10-27.
 //
 
 
-#ifndef SIM_DRIVER_VEHICLECONTROLLERADAPTER_H
-#define SIM_DRIVER_VEHICLECONTROLLERADAPTER_H
+#ifndef SIMCORE_PEDAL_CONTROLLER_H
+#define SIMCORE_PEDAL_CONTROLLER_H
 
-#include <simcore/Model.h>
-#include <VehicleModel/VehicleModel.h>
-#include <VehicleModel/PrimaryController.h>
+#include "Controller.h"
+#include "Filter.h"
 
-class VehicleControllerAdapter : public sim::Model {
-
-public:
-
-    VehicleModel vehicle;
-    PrimaryController pedal;
-    PrimaryController steer;
-
-    VehicleControllerAdapter() = default;
-    ~VehicleControllerAdapter() override = default;
+namespace sim::traffic {
 
 
-    void initialize(double initTime) override {
+    class PedalController : public Controller<double> {
 
-        // initialize timer
-        Model::initialize(initTime);
-        Model::initializeTimer(initTime);
+        double targetPosition;
+        double targetVelocity;
+        double targetAcceleration;
 
-        // reset controllers
-        pedal.reset();
-        steer.reset();
+        double actualPosition;
+        double actualVelocity;
 
-    }
+        Filter<double> acceleration;
 
+        PIDParameters positionParameters;
+        PIDParameters velocityParameters;
 
-    bool step(double simTime) override {
+        PIDMemory positionMemory;
+        PIDMemory velocityMemory;
 
-        if(!Model::step(simTime))
-            return false;
+    public:
 
-        // get time step size
-        auto dt = timeStep(simTime);
+        void reset() override {
+        }
 
-        // run steps
-        pedal.step(dt);
-        steer.step(dt);
-        vehicle.step(dt);
+        void step(double dt) override {
 
-        return true;
+        }
 
-    }
+    };
 
 
-    void terminate(double simTime) override {
+}
 
-        Model::terminate(simTime);
-
-    }
-
-};
-
-
-#endif //SIM_DRIVER_VEHICLECONTROLLERADAPTER_H
+#endif // SIMCORE_PEDAL_CONTROLLER_H
