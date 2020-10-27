@@ -17,8 +17,13 @@ option(BUILD_WITH_INJECTION "Builds the agent model with injection functionality
 # load modules
 include(ModuleDoxygen)
 include(ModuleCoverage)
-include(ModuleGtest)
 include(ModuleInjection)
+
+# load libraries for testing
+if(BUILD_TESTING)
+    include(ModuleGtest)
+    include(ModuleSimCore)
+endif(BUILD_TESTING)
 
 # library code
 add_subdirectory(src/)
