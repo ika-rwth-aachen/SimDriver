@@ -47,6 +47,12 @@ namespace agent_model {
     /*!< This enum describes the type of a road signal. */
     enum SignalType { SIGNAL_NOT_SET, SIGNAL_STOP, SIGNAL_TLS, SIGNAL_SPEED_LIMIT };
 
+    /*!< This enum describes the priority of a target. */
+    enum TargetPriority { TARGET_ON_INTERSECTION, TARGET_ON_PRIORITY_LANE, TARGET_ON_GIVE_WAY_LANE, TARGET_PRIORITY_NOT_SET};
+
+    /*!< This enum describes the maneuver performed by the host. */
+    enum Maneuver { STRAIGHT, TURN_LEFT, TURN_RIGHT };
+
 
 
     /*!< A 2D position class. */
@@ -89,6 +95,7 @@ namespace agent_model {
         double d; //!< The lateral offset of the vehicle to the current reference line of the track (e.g. lane center). (in *m*)
         double pedal; //!< The actual pedal value [-1..1]. Negative values define a brake pedal
         double steering; //!< The actual steering value [-1..1]. Negative values define left turns
+        Maneuver maneuver; //!< The general classification of the vehicle's path during the scenario
     };
 
     /*!< A class to store horizon points. */
@@ -139,6 +146,8 @@ namespace agent_model {
         double psi; //!< Relative yaw angle of the target vehicle to the ego yaw angle. (in *rad*)
         int lane; //!< Lane ID of the actual lane of the target relative to driver's lane.
         Dimensions size; //!< Width and length of the target.
+        double dsIntersection; //!< Distance along s to the intersection (if target is approaching an intersection)
+        TargetPriority priority; //!< Priority of the target's lane. Used to determine right of way.
     };
 
     /*!< A class to store the internal state for the decision&#x2F;stopping component. */
