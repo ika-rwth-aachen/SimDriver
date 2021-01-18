@@ -45,7 +45,7 @@ namespace agent_model {
     enum DrivingDirection { DD_FORWARDS, DD_BACKWARDS, DD_BOTH, DD_NONE, DD_NOT_SET };
 
     /*!< This enum describes the type of a road signal. */
-    enum SignalType { SIGNAL_NOT_SET, SIGNAL_STOP, SIGNAL_TLS, SIGNAL_SPEED_LIMIT };
+    enum SignalType { SIGNAL_NOT_SET, SIGNAL_STOP, SIGNAL_TLS, SIGNAL_SPEED_LIMIT, SIGNAL_YIELD, SIGNAL_PRIORITY };
 
     /*!< This enum describes the priority of a target. */
     enum TargetPriority { TARGET_ON_INTERSECTION, TARGET_ON_PRIORITY_LANE, TARGET_ON_GIVE_WAY_LANE, TARGET_PRIORITY_NOT_SET};
