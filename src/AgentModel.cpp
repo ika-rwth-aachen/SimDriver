@@ -159,7 +159,9 @@ void AgentModel::decisionProcessStop() {
     for(auto &e : _input.signals) {
 
         // not a stop sign
-        if(e.type != agent_model::SignalType::SIGNAL_STOP && e.type != agent_model::SignalType::SIGNAL_TLS)
+        if(e.type != agent_model::SignalType::SIGNAL_STOP 
+        && e.type != agent_model::SignalType::SIGNAL_TLS
+        && e.type != agent_model::SignalType::SIGNAL_YIELD)
             continue;
 
         // calculate net distance
@@ -169,6 +171,67 @@ void AgentModel::decisionProcessStop() {
         if(ds > _input.vehicle.v * _param.stop.TMax && ds > _param.stop.dsMax)
             continue;
 
+        // do not add a yield sign if no target is not relevant
+        double tJunctionEgo = ds / _input.vehicle.v;
+    
+        // find relevant targets
+        int ii = 0;
+        for(auto &t : _input.targets)
+        {
+            // ignore unset targets
+            if(t.id == 0) continue;
+
+            // wait if target is oncomming when turning left
+            if(e.type == agent_model::SignalType::SIGNAL_PRIORITY
+            && _input.vehicle.maneuver == agent_model::Maneuver::TURN_LEFT
+            && t.priority == agent_model::TargetPriority::TARGET_ON_PRIORITY_LANE
+            && t.dsIntersection <= t.v * _param.stop.TMax) // make sure that dsIntersection is set to inf when target is leaving intersection
+            {
+                ii++;
+                continue;
+            }
+
+            // ego has a yield sign in front
+            if(e.type == agent_model::SignalType::SIGNAL_YIELD) 
+            {
+                // ignore if target has no prority
+                if(t.priority == agent_model::TargetPriority::TARGET_PRIORITY_NOT_SET 
+                || t.priority == agent_model::TargetPriority::TARGET_ON_GIVE_WAY_LANE)
+                    continue;
+
+                // ignore if target is too far away from junction
+                // double tJunctionTarget = t.dsIntersection / t.v;
+                // TODO: do something with both time variables...
+                // TODO: maybe check if target will have passed intersection
+                
+                // Mark as relevant if target is on intersection
+                if(t.priority == agent_model::TargetPriority::TARGET_ON_INTERSECTION)
+                {
+                    ii++;
+                    continue;
+                }
+
+                // 
+                if(t.priority == agent_model::TargetPriority::TARGET_ON_PRIORITY_LANE
+                && t.dsIntersection <= t.v * _param.stop.TMax)
+                {
+                    ii++;
+                    continue;
+                }                
+            }
+
+            // check if driver has to wait when turning left
+            if(e.type == agent_model::SignalType::SIGNAL_PRIORITY 
+            && _input.vehicle.maneuver == agent_model::Maneuver::TURN_LEFT
+            ) 
+            {
+                
+            }
+
+        }
+        if(ii==0) continue;
+
+     
         // add stop point
         _state.decisions.stopping[i].id = e.id;
         _state.decisions.stopping[i].position = _input.vehicle.s + ds;
