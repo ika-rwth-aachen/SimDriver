@@ -164,7 +164,8 @@ void AgentModel::decisionProcessStop() {
         // not a stop sign
         if(e.type != agent_model::SignalType::SIGNAL_STOP 
         && e.type != agent_model::SignalType::SIGNAL_TLS
-        && e.type != agent_model::SignalType::SIGNAL_YIELD)
+        && e.type != agent_model::SignalType::SIGNAL_YIELD
+        && e.type != agent_model::SignalType::SIGNAL_PRIORITY)
             continue;
 
         // calculate net distance
@@ -228,7 +229,7 @@ void AgentModel::decisionProcessStop() {
             && _input.vehicle.maneuver == agent_model::Maneuver::TURN_LEFT
             ) 
             {
-                
+                continue;
             }
 
         }
