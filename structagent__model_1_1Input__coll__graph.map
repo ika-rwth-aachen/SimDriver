@@ -1,9 +1,9 @@
 <map id="agent_model::Input" name="agent_model::Input">
-<area shape="rect" id="node2" href="$structagent__model_1_1Horizon.html" title="agent_model::Horizon" alt="" coords="271,5,420,32"/>
-<area shape="rect" id="node3" href="$structagent__model_1_1VehicleState.html" title="agent_model::VehicleState" alt="" coords="256,56,435,83"/>
-<area shape="rect" id="node4" href="$structagent__model_1_1Target.html" title="agent_model::Target" alt="" coords="275,107,416,133"/>
-<area shape="rect" id="node5" href="$structagent__model_1_1Dimensions.html" title="agent_model::Dimensions" alt="" coords="5,81,179,108"/>
-<area shape="rect" id="node6" href="$structagent__model_1_1Position.html" title="agent_model::Position" alt="" coords="17,132,167,159"/>
-<area shape="rect" id="node7" href="$structagent__model_1_1Lane.html" title="agent_model::Lane" alt="" coords="279,157,411,184"/>
-<area shape="rect" id="node8" href="$structagent__model_1_1Signal.html" title="agent_model::Signal" alt="" coords="275,208,415,235"/>
+<area shape="rect" id="node2" href="$structagent__model_1_1Horizon.html" title="agent_model::Horizon" alt="" coords="291,5,457,32"/>
+<area shape="rect" id="node3" href="$structagent__model_1_1VehicleState.html" title="agent_model::VehicleState" alt="" coords="276,56,472,83"/>
+<area shape="rect" id="node4" href="$structagent__model_1_1Target.html" title="agent_model::Target" alt="" coords="297,107,451,133"/>
+<area shape="rect" id="node5" href="$structagent__model_1_1Dimensions.html" title="agent_model::Dimensions" alt="" coords="5,81,197,108"/>
+<area shape="rect" id="node6" href="$structagent__model_1_1Position.html" title="agent_model::Position" alt="" coords="18,132,185,159"/>
+<area shape="rect" id="node7" href="$structagent__model_1_1Lane.html" title="agent_model::Lane" alt="" coords="301,157,447,184"/>
+<area shape="rect" id="node8" href="$structagent__model_1_1Signal.html" title="agent_model::Signal" alt="" coords="297,208,451,235"/>
 </map>

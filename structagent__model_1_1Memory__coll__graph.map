@@ -1,5 +1,5 @@
 <map id="agent_model::Memory" name="agent_model::Memory">
-<area shape="rect" id="node2" href="$structagent__model_1_1MemoryVehicle.html" title="agent_model::MemoryVehicle" alt="" coords="20,5,215,32"/>
-<area shape="rect" id="node3" href="$structagent__model_1_1MemoryLateral.html" title="agent_model::MemoryLateral" alt="" coords="22,56,213,83"/>
-<area shape="rect" id="node4" href="$structagent__model_1_1MemoryLaneChange.html" title="agent_model::MemoryLaneChange" alt="" coords="5,107,229,133"/>
+<area shape="rect" id="node2" href="$structagent__model_1_1MemoryVehicle.html" title="agent_model::MemoryVehicle" alt="" coords="22,5,237,32"/>
+<area shape="rect" id="node3" href="$structagent__model_1_1MemoryLateral.html" title="agent_model::MemoryLateral" alt="" coords="23,56,236,83"/>
+<area shape="rect" id="node4" href="$structagent__model_1_1MemoryLaneChange.html" title="agent_model::MemoryLaneChange" alt="" coords="5,107,253,133"/>
 </map>
