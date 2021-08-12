@@ -424,18 +424,19 @@ void AgentModel::consciousStop() {
 
     using namespace std;
 
+    // get stop
+    agent_model::StopHorizon::StopPoint stop;
+    auto standing = false;
     // add new signals
     for(auto &e : _state.decisions.stopping) {
 
         // check position and add stop point
-        if(!std::isinf(e.position))
+        if(!std::isinf(e.position)) {
             _stop_horizon.addStopPoint(e.id, e.position, e.standingTime);
+            stop = _stop_horizon.getNextStop();
+        }
 
     }
-
-    // get stop
-    auto stop = _stop_horizon.getNextStop();
-    auto standing = false;
 
     // check standing
     if(!isinf(stop.ds)) {
