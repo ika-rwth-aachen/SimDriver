@@ -155,14 +155,6 @@ namespace agent_model {
         bool sign_is_in_use;   //!< indicates that subsign is in use (all paired TLS signals are out of service)
     };
 
-     /*!< A class to store signal information. */
-/*    struct TrafficLight {
-        unsigned int id; //!< Unique ID of the signal
-        double ds; //!< Distance to the sign from the current position along the reference line. (in *m*)
-        TrafficLightColor color; //!< Color of the light bulb.
-        TrafficLightIcon icon; //!< Icon/Shape of the traffic light.
-    };
-*/
 
     /*!< A class to store target information. */
     struct Target {
