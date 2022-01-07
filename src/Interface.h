@@ -37,6 +37,8 @@ namespace agent_model {
     static const unsigned int NOCP = 3; //!< Number of reference points per control path.
     static const unsigned int NOA = 32; //!< Number of auxiliary states.
 
+    static const unsigned int NOTL = 32; //!< Maximum defined number of traffic lights.
+
 
     /*!< This enum describes a access state of an area. */
     enum Accessibility { ACC_NOT_SET, ACC_ACCESSIBLE, ACC_NOT_ALLOWED, ACC_NOT_ACCESSIBLE };
@@ -46,6 +48,12 @@ namespace agent_model {
 
     /*!< This enum describes the type of a road signal. */
     enum SignalType { SIGNAL_NOT_SET, SIGNAL_STOP, SIGNAL_TLS, SIGNAL_SPEED_LIMIT, SIGNAL_YIELD, SIGNAL_PRIORITY };
+
+    /*!< This enum describes the color of the traffic lights. */ //For now just colors.Todo: Add different icon color combinations
+    enum TrafficLightColor { COLOR_RED, COLOR_YELLOW, COLOR_GREEN }; 
+
+    /*!< This enum describes the icon of the traffic lights. */ //For now just colors.Todo: Add different icon color combinations
+    enum TrafficLightIcon { ICON_OTHER, ICON_NONE, ICON_ARROW_STRAIGHT_AHEAD, ICON_ARROW_LEFT, ICON_ARROW_RIGHT }; 
 
     /*!< This enum describes the priority of a target. */
     enum TargetPriority { TARGET_ON_INTERSECTION, TARGET_ON_PRIORITY_LANE, TARGET_ON_GIVE_WAY_LANE, TARGET_PRIORITY_NOT_SET};
@@ -61,8 +69,14 @@ namespace agent_model {
         double y; //!< The y ordinate. (in *m*)
         Position(): x(0.0), y(0.0) {}
         Position(double pX, double pY) : x(pX), y(pY) {}
-
+        
+        bool operator==(const Position& other)
+        {
+            return x == other.x && y == other.y;
+        }
     };
+    
+
 
     /*!< A 2D position with motion and a influence factor. */
     struct DynamicPosition {
@@ -132,8 +146,23 @@ namespace agent_model {
         unsigned int id; //!< Unique ID of the signal
         double ds; //!< Distance to the sign from the current position along the reference line. (in *m*)
         SignalType type; //!< Type of the signal.
-        int value; //!< Value of the signal.
+        double value; //!< Value of the signal.
+        TrafficLightColor color; //!< Color of the light bulb.
+        TrafficLightIcon icon; //!< Icon/Shape of the traffic light.
+        bool subsignal;     //!< if true sign is subsignal to TLS and only valid in certain situations
+        bool is_out_of_service; //!< indicates that TLS is out of service if true
+        int pairedSignalID[3]; //!< Subsignals are paired to 3 Light IDs
+        bool sign_is_in_use;   //!< indicates that subsign is in use (all paired TLS signals are out of service)
     };
+
+     /*!< A class to store signal information. */
+/*    struct TrafficLight {
+        unsigned int id; //!< Unique ID of the signal
+        double ds; //!< Distance to the sign from the current position along the reference line. (in *m*)
+        TrafficLightColor color; //!< Color of the light bulb.
+        TrafficLightIcon icon; //!< Icon/Shape of the traffic light.
+    };
+*/
 
     /*!< A class to store target information. */
     struct Target {
@@ -286,6 +315,7 @@ namespace agent_model {
         Signal signals[NOS]; //!< The signals.
         Lane lanes[NOL]; //!< The lanes.
         Target targets[NOT]; //!< The targets.
+    //    TrafficLight lights[NOTL]; //!< The traffic lights.
     };
 
     /*!< A class to store all internal states. */
