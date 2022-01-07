@@ -155,18 +155,29 @@ void AgentModel::decisionProcessStop() {
         e.position = INFINITY;
         e.standingTime = INFINITY;
     }
+   
 
-
-    // add new signals
+ //add new signals (added trafficlight extension)
     unsigned int i = 0;
-    for(auto &e : _input.signals) {
+
+    for(auto &e : _input.signals) 
+    {
 
         // not a stop sign
-        if(e.type != agent_model::SignalType::SIGNAL_STOP 
+        if(e.type != agent_model::SignalType::SIGNAL_TLS            //added to original statement
+        && e.type != agent_model::SignalType::SIGNAL_STOP 
         && e.type != agent_model::SignalType::SIGNAL_TLS
         && e.type != agent_model::SignalType::SIGNAL_YIELD
         && e.type != agent_model::SignalType::SIGNAL_PRIORITY)
             continue;
+
+        // not a red or yellow light and also not turning left
+        if(e.type == agent_model::SignalType::SIGNAL_TLS 
+        && e.color != agent_model::TrafficLightColor::COLOR_RED
+        //&& e.color != agent_model::TrafficLightColor::COLOR_YELLOW      //how to handle?
+        && _input.vehicle.maneuver != agent_model::Maneuver::TURN_LEFT)
+            continue;
+
 
         // calculate net distance
         auto ds = e.ds - _param.stop.dsGap + _param.vehicle.pos.x - _param.vehicle.size.length * 0.5;
@@ -175,79 +186,167 @@ void AgentModel::decisionProcessStop() {
         if(ds > _input.vehicle.v * _param.stop.TMax && ds > _param.stop.dsMax)
             continue;
 
+        // xxx???
         // do not add a yield sign if no target is not relevant
         double tJunctionEgo = ds / _input.vehicle.v;
-    
-        // find relevant targets
-        int ii = 0;
-        for(auto &t : _input.targets)
+
+        //do trafficlight processing
+        if (e.type == agent_model::SignalType::SIGNAL_TLS)
         {
-            // ignore unset targets
-            if(t.id == 0) continue;
-
-            // wait if target is oncomming when turning left
-            if(e.type == agent_model::SignalType::SIGNAL_PRIORITY
-            && _input.vehicle.maneuver == agent_model::Maneuver::TURN_LEFT
-            && t.priority == agent_model::TargetPriority::TARGET_ON_PRIORITY_LANE
-            && t.dsIntersection <= t.v * _param.stop.TMax) // make sure that dsIntersection is set to inf when target is leaving intersection
+            // find relevant targets for trafficlight processing
+            int ilight = 0;
+            for (auto &t : _input.targets)
             {
-                ii++;
-                continue;
-            }
-
-            // ego has a yield sign in front
-            if(e.type == agent_model::SignalType::SIGNAL_YIELD) 
-            {
-                // ignore if target has no prority
-                if(t.priority == agent_model::TargetPriority::TARGET_PRIORITY_NOT_SET 
-                || t.priority == agent_model::TargetPriority::TARGET_ON_GIVE_WAY_LANE)
+                // ignore unset targets
+                if (t.id == 0)
                     continue;
 
-                // ignore if target is too far away from junction
-                // double tJunctionTarget = t.dsIntersection / t.v;
-                // TODO: do something with both time variables...
-                // TODO: maybe check if target will have passed intersection
-                
-                // Mark as relevant if target is on intersection
-                if(t.priority == agent_model::TargetPriority::TARGET_ON_INTERSECTION)
+                //continue when turning left while turn left icon is green //https://www.123fahrschule.de/lernen/ampeln-und-lichtzeichen
+                if (e.icon == agent_model::TrafficLightIcon::ICON_ARROW_LEFT 
+                && _input.vehicle.maneuver == agent_model::Maneuver::TURN_LEFT 
+                && e.color == agent_model::TrafficLightColor::COLOR_GREEN)
+                    continue;
+
+                //wait if target is oncomming when turning left                     
+                // how to check target Maneuver?
+                if (e.icon == agent_model::TrafficLightIcon::ICON_NONE 
+                && _input.vehicle.maneuver == agent_model::Maneuver::TURN_LEFT
+                //&& t.priority == agent_model::TargetPriority::TARGET_ON_PRIORITY_LANE
+                && t.dsIntersection <= t.v * _param.stop.TMax)          // make sure that dsIntersection is set to inf when target is leaving intersection
                 {
-                    ii++;
+                    ilight++;
+                    continue;
+                }
+                
+                if (e.color == agent_model::TrafficLightColor::COLOR_RED 
+                && _input.vehicle.maneuver == agent_model::Maneuver::TURN_RIGHT
+                //&& e.type == agent_model::SignalType::TYPE_TRAFFIC_LIGHT_GREEN_ARROW //signal to be added to enum (official number 92)
+                && t.v == 0) //only if target vehicle does not move
+                {
                     continue;
                 }
 
-                // 
-                if(t.priority == agent_model::TargetPriority::TARGET_ON_PRIORITY_LANE
-                && t.dsIntersection <= t.v * _param.stop.TMax)
+                else if (e.color == agent_model::TrafficLightColor::COLOR_RED) //only if target vehicle does not move
                 {
-                    ii++;
+                    ilight++;
                     continue;
-                }                
-            }
+                }
 
-            // check if driver has to wait when turning left
-            if(e.type == agent_model::SignalType::SIGNAL_PRIORITY 
-            && _input.vehicle.maneuver == agent_model::Maneuver::TURN_LEFT
-            ) 
-            {
-                continue;
-            }
+                if (ilight == 0)
+                    continue;
 
+                // add stop point
+                _state.decisions.stopping[i].id = e.id;
+                _state.decisions.stopping[i].position = _input.vehicle.s + ds;
+                _state.decisions.stopping[i].standingTime = _param.stop.tSign;
+
+                // increment
+                i++;
+            }
         }
-        if(ii==0) continue;
+        //end trafficlight processing
 
-     
-        // add stop point
-        _state.decisions.stopping[i].id = e.id;
-        _state.decisions.stopping[i].position = _input.vehicle.s + ds;
-        _state.decisions.stopping[i].standingTime = _param.stop.tSign;
+        /*
+        if(e.type != agent_model::SignalType::SIGNAL_TLS)
+        {
+            if(e.subsignal)
+            {
+                if(e.sign_is_in_use)
+                {
+                   // do sign processing 
+                }
+                else if (!e.sign_is_in_use)
+                {
+                    continue;           //ignore this sign
+                }
+            }
+            else if(!e.subsignal)
+               {
+                   //do sign processing
+               }
+        }*/
 
-        // increment
-        i++;
+        if (e.type != agent_model::SignalType::SIGNAL_TLS)
+        {
+            // do sign processing
+            if ((e.subsignal && e.sign_is_in_use) || !e.subsignal)
+            {
+                // find relevant targets
+                int ii = 0;
+                for (auto &t : _input.targets)
+                {
+                    // ignore unset targets
+                    if (t.id == 0)
+                        continue;
 
+                    // wait if target is oncomming when turning left
+                    if (e.type == agent_model::SignalType::SIGNAL_PRIORITY 
+                    && _input.vehicle.maneuver == agent_model::Maneuver::TURN_LEFT 
+                    && t.priority == agent_model::TargetPriority::TARGET_ON_PRIORITY_LANE 
+                    && t.dsIntersection <= t.v * _param.stop.TMax) // make sure that dsIntersection is set to inf when target is leaving intersection
+                    {
+                        ii++;
+                        continue;
+                    }
+
+                    // ego has a yield sign in front
+                    if (e.type == agent_model::SignalType::SIGNAL_YIELD)
+                    {
+                        // ignore if target has no prority
+                        if (t.priority == agent_model::TargetPriority::TARGET_PRIORITY_NOT_SET 
+                        || t.priority == agent_model::TargetPriority::TARGET_ON_GIVE_WAY_LANE)
+                            continue;
+
+                        // ignore if target is too far away from junction
+                        // double tJunctionTarget = t.dsIntersection / t.v;
+                        // TODO: do something with both time variables...
+                        // TODO: maybe check if target will have passed intersection
+
+                        // Mark as relevant if target is on intersection
+                        if (t.priority == agent_model::TargetPriority::TARGET_ON_INTERSECTION)
+                        {
+                            ii++;
+                            continue;
+                        }
+
+                        //
+                        if (t.priority == agent_model::TargetPriority::TARGET_ON_PRIORITY_LANE 
+                        && t.dsIntersection <= t.v * _param.stop.TMax)
+                        {
+                            ii++;
+                            continue;
+                        }
+                    }
+
+                    // check if driver has to wait when turning left
+                    if (e.type == agent_model::SignalType::SIGNAL_PRIORITY 
+                    && _input.vehicle.maneuver == agent_model::Maneuver::TURN_LEFT)
+                    {
+                        continue;
+                    }
+                }
+                if (ii == 0)
+                    continue;
+
+                // add stop point
+                _state.decisions.stopping[i].id = e.id;
+                _state.decisions.stopping[i].position = _input.vehicle.s + ds;
+                _state.decisions.stopping[i].standingTime = _param.stop.tSign;
+
+                // increment
+                i++;
+            }
+            // end sign processing
+
+            //sign is not in use (e.g corresponding trafficlight is active)
+            else if(e.subsignal && !e.sign_is_in_use)   
+               {
+                   continue;
+                   //ignore
+               }
+        }
     }
-
 }
-
 
 void AgentModel::decisionLaneChange() {
 
@@ -424,19 +523,18 @@ void AgentModel::consciousStop() {
 
     using namespace std;
 
-    // get stop
-    agent_model::StopHorizon::StopPoint stop;
-    auto standing = false;
     // add new signals
     for(auto &e : _state.decisions.stopping) {
 
         // check position and add stop point
-        if(!std::isinf(e.position)) {
+        if(!std::isinf(e.position))
             _stop_horizon.addStopPoint(e.id, e.position, e.standingTime);
-            stop = _stop_horizon.getNextStop();
-        }
 
     }
+
+    // get stop
+    auto stop = _stop_horizon.getNextStop();
+    auto standing = false;
 
     // check standing
     if(!isinf(stop.ds)) {
