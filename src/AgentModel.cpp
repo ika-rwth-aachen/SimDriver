@@ -246,25 +246,6 @@ void AgentModel::decisionProcessStop() {
         }
         //end trafficlight processing
 
-        /*
-        if(e.type != agent_model::SignalType::SIGNAL_TLS)
-        {
-            if(e.subsignal)
-            {
-                if(e.sign_is_in_use)
-                {
-                   // do sign processing 
-                }
-                else if (!e.sign_is_in_use)
-                {
-                    continue;           //ignore this sign
-                }
-            }
-            else if(!e.subsignal)
-               {
-                   //do sign processing
-               }
-        }*/
 
         if (e.type != agent_model::SignalType::SIGNAL_TLS)
         {
