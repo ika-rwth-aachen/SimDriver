@@ -307,7 +307,6 @@ namespace agent_model {
         Signal signals[NOS]; //!< The signals.
         Lane lanes[NOL]; //!< The lanes.
         Target targets[NOT]; //!< The targets.
-    //    TrafficLight lights[NOTL]; //!< The traffic lights.
     };
 
     /*!< A class to store all internal states. */
