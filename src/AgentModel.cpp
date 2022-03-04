@@ -162,8 +162,16 @@ void AgentModel::decisionProcessStop() {
 
     for(auto &e : _input.signals) 
     {
+        //set destination stop
+        if(e.id == agent_model::NOS) 
+        {
+            _state.decisions.stopping[i].id = e.id;
+            _state.decisions.stopping[i].position = _input.vehicle.s + e.ds;
+            _state.decisions.stopping[i].standingTime = INFINITY;
+            i++;
+        }
 
-        // not a stop sign
+        // not a signal that requires a stop
         if(e.type != agent_model::SignalType::SIGNAL_TLS            //added to original statement
         && e.type != agent_model::SignalType::SIGNAL_STOP 
         && e.type != agent_model::SignalType::SIGNAL_TLS
@@ -205,7 +213,7 @@ void AgentModel::decisionProcessStop() {
             }
             else if (e.color == agent_model::TrafficLightColor::COLOR_GREEN) {
 
-                // add stop point
+                // "remove" stop point by setting standing time = 0
                 _state.decisions.stopping[i].id = e.id;
                 _state.decisions.stopping[i].position = _input.vehicle.s + ds;
                 _state.decisions.stopping[i].standingTime = 0;
