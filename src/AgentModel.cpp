@@ -183,7 +183,7 @@ void AgentModel::decisionProcessStop() {
         auto ds = e.ds - _param.stop.dsGap + _param.vehicle.pos.x - _param.vehicle.size.length * 0.5;
 
         // do not add when distance is too large
-        if(ds > _input.vehicle.v * _param.stop.TMax && ds > _param.stop.dsMax)
+        if(_input.vehicle.v > 0 && ds > _input.vehicle.v * _param.stop.TMax && ds > _param.stop.dsMax)
             continue;
 
         // xxx???
@@ -193,6 +193,22 @@ void AgentModel::decisionProcessStop() {
         //do trafficlight processing
         if (e.type == agent_model::SignalType::SIGNAL_TLS)
         {
+            // normal traffic lights (without potential challenger vehicle)
+            if (e.color == agent_model::TrafficLightColor::COLOR_RED) {
+
+                // add stop point
+                _state.decisions.stopping[i].id = e.id;
+                _state.decisions.stopping[i].position = _input.vehicle.s + ds;
+                _state.decisions.stopping[i].standingTime = INFINITY;
+            }
+            else if (e.color == agent_model::TrafficLightColor::COLOR_GREEN) {
+
+                // add stop point
+                _state.decisions.stopping[i].id = e.id;
+                _state.decisions.stopping[i].position = _input.vehicle.s + ds;
+                _state.decisions.stopping[i].standingTime = 0;
+            }
+            
             // find relevant targets for trafficlight processing
             int ilight = 0;
             for (auto &t : _input.targets)

@@ -90,6 +90,10 @@ namespace agent_model {
          */
         bool addStopPoint(unsigned long id, double sStop, double standingTime) {
 
+            if(_elements.find(id) != _elements.end() && standingTime == 0) {
+                _elements[id].passed = true;
+                return true;
+            }
             // only add if not already added
             if(_elements.find(id) != _elements.end())
                 return false;
@@ -148,7 +152,7 @@ namespace agent_model {
                 auto &e = ke.second;
 
                 // ignore passed stops
-                if(e.passed || std::isinf(e.timeStartStanding))
+                if(e.passed)
                     continue;
 
                 // set passed
