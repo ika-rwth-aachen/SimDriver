@@ -172,11 +172,13 @@ void AgentModel::decisionProcessStop() {
             continue;
 
         // not a red or yellow light and also not turning left
+        /*
         if(e.type == agent_model::SignalType::SIGNAL_TLS 
         && e.color != agent_model::TrafficLightColor::COLOR_RED
         //&& e.color != agent_model::TrafficLightColor::COLOR_YELLOW      //how to handle?
         && _input.vehicle.maneuver != agent_model::Maneuver::TURN_LEFT)
             continue;
+        */
 
 
         // calculate net distance
