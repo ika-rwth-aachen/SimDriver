@@ -169,6 +169,7 @@ void AgentModel::decisionProcessStop() {
             _state.decisions.stopping[i].position = _input.vehicle.s + e.ds;
             _state.decisions.stopping[i].standingTime = INFINITY;
             i++;
+            continue;
         }
 
         // not a signal that requires a stop
