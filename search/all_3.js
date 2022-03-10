@@ -1,6 +1,7 @@
 var searchData=
 [
   ['closed',['closed',['../structagent__model_1_1Lane.html#a95023f673387781643ef18c6329b6692',1,'agent_model::Lane']]],
+  ['color',['color',['../structagent__model_1_1Signal.html#aaa824f4d0f640ee4ead00c94fbfb6ef5',1,'agent_model::Signal']]],
   ['conscious',['Conscious',['../structagent__model_1_1Conscious.html',1,'agent_model::Conscious'],['../structagent__model_1_1State.html#a9deb318011e37d7e5e07ce0322470bea',1,'agent_model::State::conscious()']]],
   ['consciousfollow',['ConsciousFollow',['../structagent__model_1_1ConsciousFollow.html',1,'agent_model::ConsciousFollow'],['../classAgentModel.html#ae8a4c6598a73b1c54c4b45e38a75a082',1,'AgentModel::consciousFollow()']]],
   ['consciouslanechange',['consciousLaneChange',['../classAgentModel.html#ac8846a1db0ce42b528adf97a28266faf',1,'AgentModel']]],

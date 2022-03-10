@@ -7,6 +7,7 @@ var searchData=
   ['setmaxvelocity',['setMaxVelocity',['../classagent__model_1_1VelocityHorizon.html#a7c8bc671551177c60ad9b432e03e0840',1,'agent_model::VelocityHorizon']]],
   ['setscale',['setScale',['../classagent__model_1_1DistanceTimeInterval.html#a84988d738b7b982c6651eb1062b3557f',1,'agent_model::DistanceTimeInterval']]],
   ['settimeinterval',['setTimeInterval',['../classagent__model_1_1DistanceTimeInterval.html#a7bc82e69ab4de07cb75c1ed6622ee99b',1,'agent_model::DistanceTimeInterval']]],
+  ['sign_5fis_5fin_5fuse',['sign_is_in_use',['../structagent__model_1_1Signal.html#a1a206a7b789ef5c33d316550e63c0037',1,'agent_model::Signal']]],
   ['signal',['Signal',['../structagent__model_1_1Signal.html',1,'agent_model']]],
   ['signals',['signals',['../structagent__model_1_1Input.html#aee5aa86a995da983872946fa3614230a',1,'agent_model::Input']]],
   ['simulationtime',['simulationTime',['../structagent__model_1_1State.html#acde419e84407d5f588138ba0aba3fc9d',1,'agent_model::State']]],
@@ -29,5 +30,6 @@ var searchData=
   ['subconsciousspeed',['subconsciousSpeed',['../classAgentModel.html#a17f1ed28eeb5fcf2b86c01f1fdf3f56a',1,'AgentModel']]],
   ['subconsciousstartstop',['subconsciousStartStop',['../classAgentModel.html#a1c3c4292cbcb9de88226082c4088cd88',1,'AgentModel']]],
   ['subconsciousstop',['subconsciousStop',['../classAgentModel.html#ac5f98c51b856eba96bb385a1a2722de1',1,'AgentModel']]],
+  ['subsignal',['subsignal',['../structagent__model_1_1Signal.html#a4a9997b313520ee5b918218c4fa69ee7',1,'agent_model::Signal']]],
   ['switchlane',['switchLane',['../structagent__model_1_1MemoryLaneChange.html#a28fc8145a45f8a858de5e2702d455100',1,'agent_model::MemoryLaneChange']]]
 ];
