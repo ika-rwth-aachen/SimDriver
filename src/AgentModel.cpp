@@ -78,6 +78,10 @@ void AgentModel::init() {
     _lane_change_process_interval.setDelta(0.3);
     _lane_change_process_interval.setScale(0.0);
 
+    // init road priorities
+    _state.conscious.stop.priority = false;
+    _state.conscious.stop.give_way = false;
+
 }
 
 
@@ -155,19 +159,53 @@ void AgentModel::decisionProcessStop() {
         e.position = INFINITY;
         e.standingTime = INFINITY;
     }
-   
-    unsigned int i = 0;
 
+    // not yet decided about stop or drive
+    bool stop = false;
+    bool drive = false;
+
+    // iterate over all signals and mark ds of the next relavant signal
+    double ds_rel = INFINITY;
+    double ds_rel_tls = INFINITY;
+    double ds_rel_sgn = INFINITY;
+    int id_rel = -1;
+    int id_rel_tls = -1;
+    int id_rel_sgn = -1;
     for(auto &e : _input.signals) 
     {
+        if (e.type == agent_model::SignalType::SIGNAL_TLS && 
+            e.ds > 0 && e.ds < ds_rel_tls) {
+            ds_rel_tls = e.ds;
+            id_rel_tls = e.id;
+        }
+        if (e.type != agent_model::SignalType::SIGNAL_TLS && 
+            e.ds > 0 && e.ds < ds_rel_sgn) {
+            ds_rel_sgn = e.ds;
+            id_rel_sgn = e.id;
+        }   
+    }
+
+    // take closest signal (traffic light for same ds)
+    if (ds_rel_tls <= ds_rel_sgn)
+    {
+        id_rel = id_rel_tls;
+        ds_rel = ds_rel_tls;
+    } else 
+    {
+        id_rel = id_rel_sgn;
+        ds_rel = ds_rel_sgn;
+    }
+
+    unsigned int i = 0;
+    for(auto &e : _input.signals) 
+    {   
         // set destination stop
-        if(e.id == agent_model::NOS) 
+        if(e.id == agent_model::NOS && e.id == id_rel) 
         {
             _state.decisions.stopping[i].id = e.id;
             _state.decisions.stopping[i].position = _input.vehicle.s + e.ds;
             _state.decisions.stopping[i].standingTime = INFINITY;
-            i++;
-            continue;
+            return;
         }
 
         // not a signal that requires a potential stop
@@ -180,24 +218,25 @@ void AgentModel::decisionProcessStop() {
         // calculate net distance
         auto ds = e.ds - _param.stop.dsGap + _param.vehicle.pos.x - _param.vehicle.size.length * 0.5;
 
-        // do not add when distance is too large
-        if(_input.vehicle.v > 0 && ds > _input.vehicle.v * _param.stop.TMax && ds > _param.stop.dsMax)
-            continue;
-        
-        // per default not on priority lane and not yet decided about stop/drive
-        bool stop = false;      // decision for stopping
-        bool drive = false;     // decision for driving
-        bool priority = false;  // ego on priority lane? 
-
         // trafficlights
         if (e.type == agent_model::SignalType::SIGNAL_TLS)
         {
+            // skipt if wrong id
+            if (e.id != id_rel) continue;
+
             // normal traffic lights (without potential challenger vehicle)
             if (e.color == agent_model::TrafficLightColor::COLOR_RED) {
                 stop = true;
+                _state.conscious.stop.give_way = true;
+                
+                // set stop point for INFINITY ( = until removed)
+                _state.decisions.stopping[i].id = e.id;
+                _state.decisions.stopping[i].position = _input.vehicle.s + ds;
+                _state.decisions.stopping[i].standingTime = INFINITY;
+                return;
             }
             else if (e.color == agent_model::TrafficLightColor::COLOR_GREEN) {
-                priority = true;
+                _state.conscious.stop.priority = true;
 
                 // "remove" stop point by setting standing time = 0 
                 // (can be reactivated later by targets)
@@ -215,76 +254,94 @@ void AgentModel::decisionProcessStop() {
         // signals
         if (e.type != agent_model::SignalType::SIGNAL_TLS)
         {
-            if (e.type == agent_model::SignalType::SIGNAL_YIELD) {
-                priority = false;
-            }
+            // skipt if wrong id
+            if (e.id != id_rel) continue;
 
-            if (e.type == agent_model::SignalType::SIGNAL_PRIORITY) {
-                priority = true;
-            }
-            
             // skip if only subsignal or not in use
             if ((!e.subsignal && !e.sign_is_in_use) || e.subsignal) continue;
+
+            // case stop signal
+            if (e.type == agent_model::SignalType::SIGNAL_STOP) {
+                stop = true;
+                _state.conscious.stop.give_way = true;
+            }
+            
+            // case yield signal
+            if (e.type == agent_model::SignalType::SIGNAL_YIELD) {
+                _state.conscious.stop.give_way = true;
+            }
+
+            // case priority signal
+            if (e.type == agent_model::SignalType::SIGNAL_PRIORITY) {
+                _state.conscious.stop.priority = true;
+            }
+            
         }
+    }
 
-        // ignore if on priority lane and not turning left
-        if (priority && _input.vehicle.maneuver != agent_model::Maneuver::TURN_LEFT) continue;
+ 
+    
+    // if not yet decided
+    if (!drive && !stop) {   
         
-        // if not yet decided
-        if (!drive && !stop) {
+        // ignore if on priority lane and not turning left
+        if (_state.conscious.stop.priority && _input.vehicle.maneuver != agent_model::Maneuver::TURN_LEFT) return;
 
-            // process all relevant targets
-            for (auto &t : _input.targets)
+        // process all relevant targets
+        for (auto &t : _input.targets)
+        {
+            // ignore unset targets
+            if (t.id == 0) continue;
+
+            // only wait on priority lane if turning left and target occur
+            if (_state.conscious.stop.priority && 
+            _input.vehicle.maneuver == agent_model::Maneuver::TURN_LEFT
+            && t.dsIntersection <= t.v * _param.stop.TMax)
             {
-                // ignore unset targets
-                if (t.id == 0) continue;
+                stop = true;
+                continue;
+            }
 
-                // only wait on priority lane if turning left and target occur
-                if (priority && 
-                _input.vehicle.maneuver == agent_model::Maneuver::TURN_LEFT
-                // && t.priority == agent_model::TargetPriority::TARGET_ON_PRIORITY_LANE // TODO think about
+            // ego is not on priority lane
+            if (_state.conscious.stop.give_way)
+            {
+                // ignore if target has no prority
+                if (t.priority == agent_model::TargetPriority::TARGET_PRIORITY_NOT_SET)
+                    continue;
+
+                // ignore if target has to give way
+                if (t.priority == agent_model::TargetPriority::TARGET_ON_GIVE_WAY_LANE)
+                    continue;
+
+                // stop for target on intersection
+                if (t.priority == agent_model::TargetPriority::TARGET_ON_INTERSECTION)
+                {
+                    stop = true;
+                    continue;
+                }
+
+                // stop for target on priority lane
+                if (t.priority == agent_model::TargetPriority::TARGET_ON_PRIORITY_LANE 
                 && t.dsIntersection <= t.v * _param.stop.TMax)
                 {
                     stop = true;
-                }
-
-                // ego is not on priority lane
-                if (!priority)
-                {
-                    // ignore if target has no prority
-                    if (t.priority == agent_model::TargetPriority::TARGET_PRIORITY_NOT_SET)
-                        continue;
-
-                    // ignore if target has to give way
-                    if (t.priority == agent_model::TargetPriority::TARGET_ON_GIVE_WAY_LANE)
-                        continue;
-
-                    // stop for target on intersection
-                    if (t.priority == agent_model::TargetPriority::TARGET_ON_INTERSECTION)
-                    {
-                        stop = true;
-                    }
-
-                    // stop for target on priority lane
-                    if (t.priority == agent_model::TargetPriority::TARGET_ON_PRIORITY_LANE 
-                    && t.dsIntersection <= t.v * _param.stop.TMax)
-                    {
-                        stop = true;
-                    }
+                    continue;
                 }
             }
+            
+            // ego has no priority set: right of way rule
+            if (!_state.conscious.stop.priority && !_state.conscious.stop.give_way) {
+                // TODO
+            }
         }
+    }
 
-        // add stop point
-        if (stop)
-        {
-            _state.decisions.stopping[i].id = e.id;
-            _state.decisions.stopping[i].position = _input.vehicle.s + ds;
-            _state.decisions.stopping[i].standingTime = _param.stop.tSign;
-        }
-
-        // increment signal counter
-        i++;
+    // add stop point
+    if (stop)
+    {
+        _state.decisions.stopping[i].id = id_rel;
+        _state.decisions.stopping[i].position = _input.vehicle.s + ds_rel;
+        _state.decisions.stopping[i].standingTime = _param.stop.tSign;
     }
 }
 

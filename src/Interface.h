@@ -196,6 +196,8 @@ namespace agent_model {
         double ds; //!< The actual distance to the stop point. (in *m*)
         double dsMax; //!< The reference distance at which the driver decides to stop (in *m*)
         bool standing; //!< A flag to define if the driver has stopped for the desired stop.
+        bool priority; //!< A flag to define if the driver drives on a priority lane.
+        bool give_way; //!< A flag to define if the driver drives on a give way lane.
     };
 
     /*!< A class to store the internal state for the conscious&#x2F;follow component. */
