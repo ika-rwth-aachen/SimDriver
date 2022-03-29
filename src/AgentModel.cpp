@@ -184,8 +184,8 @@ void AgentModel::decisionProcessStop() {
         if ((e.type == agent_model::SignalType::SIGNAL_YIELD ||
             e.type == agent_model::SignalType::SIGNAL_PRIORITY ||
             e.type == agent_model::SignalType::SIGNAL_STOP) && 
-            rel->sign_is_in_use &&
-            !rel->subsignal &&
+            e.sign_is_in_use &&
+            !e.subsignal &&
             e.ds >= 0 && e.ds < ds_rel_sgn) 
         {
             ds_rel_sgn = e.ds;
