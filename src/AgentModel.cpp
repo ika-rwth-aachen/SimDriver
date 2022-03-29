@@ -160,40 +160,45 @@ void AgentModel::decisionProcessStop() {
         e.standingTime = INFINITY;
     }
 
-    // not yet decided about stop or drive
+    // not yet decided about to stop or drive
     bool stop = false;
     bool drive = false;
+    bool found_signal = false;
 
     // iterate over all signals and mark ds of the next relavant signal
-    double ds_rel = INFINITY;
     double ds_rel_tls = INFINITY;
     double ds_rel_sgn = INFINITY;
-    int id_rel = -1;
-    int id_rel_tls = -1;
-    int id_rel_sgn = -1;
+    agent_model::Signal* rel;
+    agent_model::Signal* rel_tls;
+    agent_model::Signal* rel_sgn;
+
     for(auto &e : _input.signals) 
     {
         if (e.type == agent_model::SignalType::SIGNAL_TLS && 
-            e.ds > 0 && e.ds < ds_rel_tls) {
+            e.ds >= 0 && e.ds < ds_rel_tls) 
+        {
             ds_rel_tls = e.ds;
-            id_rel_tls = e.id;
+            rel_tls = &e;
+            found_signal = true;
         }
-        if (e.type != agent_model::SignalType::SIGNAL_TLS && 
-            e.ds > 0 && e.ds < ds_rel_sgn) {
+        if ((e.type == agent_model::SignalType::SIGNAL_YIELD ||
+            e.type == agent_model::SignalType::SIGNAL_PRIORITY ||
+            e.type == agent_model::SignalType::SIGNAL_STOP) && 
+            rel->sign_is_in_use &&
+            !rel->subsignal &&
+            e.ds >= 0 && e.ds < ds_rel_sgn) 
+        {
             ds_rel_sgn = e.ds;
-            id_rel_sgn = e.id;
+            rel_sgn = &e;
+            found_signal = true;
         }   
     }
 
-    // take closest signal (traffic light for same ds)
-    if (ds_rel_tls <= ds_rel_sgn)
-    {
-        id_rel = id_rel_tls;
-        ds_rel = ds_rel_tls;
-    } else 
-    {
-        id_rel = id_rel_sgn;
-        ds_rel = ds_rel_sgn;
+    // take closest signal (take traffic light even if 10 meters behind sign)
+    if (ds_rel_tls <= ds_rel_sgn+10) {
+        rel = rel_tls;
+    } else {
+        rel = rel_sgn;
     }
 
     unsigned int i = 0;
