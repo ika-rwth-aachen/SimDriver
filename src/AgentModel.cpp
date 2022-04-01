@@ -160,6 +160,14 @@ void AgentModel::decisionProcessStop() {
         e.standingTime = INFINITY;
     }
 
+    // add stop point because of destination point
+    if (_input.signals[agent_model::NOS-1].id == agent_model::NOS)
+    {
+        _state.decisions.stopping[agent_model::NOS-1].id = agent_model::NOS;
+        _state.decisions.stopping[agent_model::NOS-1].position = _input.vehicle.s + _input.signals[agent_model::NOS-1].ds;
+        _state.decisions.stopping[agent_model::NOS-1].standingTime = INFINITY;
+    }
+
     // not yet decided about to stop or drive
     bool stop = false;
     bool drive = false;
@@ -174,6 +182,8 @@ void AgentModel::decisionProcessStop() {
 
     for(auto &e : _input.signals) 
     {
+        if (e.id == agent_model::NOS) continue;
+
         if (e.type == agent_model::SignalType::SIGNAL_TLS && 
             e.ds >= 0 && e.ds < ds_rel_tls) 
         {
@@ -203,15 +213,6 @@ void AgentModel::decisionProcessStop() {
 
     if(found_signal) 
     {   
-        // set destination stop
-        if(rel->id == agent_model::NOS) 
-        {
-            _state.decisions.stopping[0].id = rel->id;
-            _state.decisions.stopping[0].position = _input.vehicle.s + rel->ds;
-            _state.decisions.stopping[0].standingTime = INFINITY;
-            return;
-        }
-
         // calculate net distance
         auto ds = rel->ds - _param.stop.dsGap + _param.vehicle.pos.x - _param.vehicle.size.length * 0.5;
 
@@ -273,6 +274,14 @@ void AgentModel::decisionProcessStop() {
         }
     }
 
+    // add stop point because of signal
+    if (stop)
+    {
+        _state.decisions.stopping[0].id = rel->id;
+        _state.decisions.stopping[0].position = _input.vehicle.s + rel->ds;
+        _state.decisions.stopping[0].standingTime = _param.stop.tSign;
+    }
+
     // if not yet decided to drive or stop -> consider targets
     if (!drive && !stop) {   
         
@@ -324,7 +333,23 @@ void AgentModel::decisionProcessStop() {
                 // if target has to give way as well (first come, first drive)
                 if (t.priority == agent_model::TargetPriority::TARGET_ON_GIVE_WAY_LANE) 
                 {   
-                    // if ego approaches intersection earlier
+                    // special cases
+
+                    // opposite taget and left turn -> stop
+                    if (t.position == agent_model::TARGET_ON_OPPOSITE && _input.vehicle.maneuver == agent_model::Maneuver::TURN_LEFT)
+                    {
+                        if (_input.vehicle.maneuver == agent_model::Maneuver::TURN_LEFT)
+                        stop = true;
+                        continue;
+                    }
+                    
+                    // right target and right turn -> continue
+                    else if (t.position == agent_model::TARGET_ON_RIGHT && _input.vehicle.maneuver == agent_model::Maneuver::TURN_RIGHT)
+                    {
+                        continue;
+                    }
+
+                    // if no special case, check if ego reaches junction earlier
                     if (rel->ds / _input.vehicle.v < t.dsIntersection / t.v) 
                     {
                         continue;
@@ -333,6 +358,7 @@ void AgentModel::decisionProcessStop() {
                     else 
                     {
                         stop = true;
+                        continue;
                     }
                 }
 
@@ -355,26 +381,40 @@ void AgentModel::decisionProcessStop() {
             if (!_state.conscious.stop.priority && !_state.conscious.stop.give_way) 
             {
                 if (t.position == agent_model::TARGET_ON_JUNCTION)
+                {
                     stop = true;
-                if (t.position == agent_model::TARGET_NOT_RELEVANT) 
                     continue;
+                }
+                if (t.position == agent_model::TARGET_NOT_RELEVANT) 
+                {
+                    continue;
+                }
                 if (t.position == agent_model::TARGET_ON_OPPOSITE &&
                     _input.vehicle.maneuver == agent_model::Maneuver::TURN_LEFT)
+                {
                     stop= true;
-                if (t.position == agent_model::TARGET_ON_RIGHT) 
-                    stop = true;
-                if (t.position == agent_model::TARGET_ON_LEFT)
                     continue;
+                }
+                if (t.position == agent_model::TARGET_ON_RIGHT) 
+                {
+                    stop= true;
+                    continue;
+                }
+                if (t.position == agent_model::TARGET_ON_LEFT)
+                {
+                    continue;
+                }
             }
         }
-    }
-
-    // add stop point
-    if (stop)
-    {
-        _state.decisions.stopping[0].id = rel->id;
-        _state.decisions.stopping[0].position = _input.vehicle.s + rel->ds;
-        _state.decisions.stopping[0].standingTime = _param.stop.tSign;
+        
+        // add stop point because of target
+        if (stop)
+        {
+            double ds_stop = std::max(0.0, _input.vehicle.dsIntersection - 10);
+            _state.decisions.stopping[1].id = agent_model::NOS + 1; //convention
+            _state.decisions.stopping[1].position = _input.vehicle.s + ds_stop;
+            _state.decisions.stopping[1].standingTime = _param.stop.tSign;
+        }
     }
 }
 

@@ -59,7 +59,7 @@ namespace agent_model {
     enum TargetPriority { TARGET_ON_INTERSECTION, TARGET_ON_PRIORITY_LANE, TARGET_ON_GIVE_WAY_LANE, TARGET_PRIORITY_NOT_SET };
 
     /*!< This enum describes the priority of a target. */
-    enum TargetPosition { TARGET_NOT_RELEVANT, TARGET_ON_JUNCTION, TARGET_ON_OPPOSITE, TARGET_ON_RIGHT, TARGET_ON_LEFT };
+    enum TargetPosition { TARGET_NOT_RELEVANT, TARGET_ON_PATH, TARGET_ON_JUNCTION, TARGET_ON_OPPOSITE, TARGET_ON_RIGHT, TARGET_ON_LEFT };
 
     /*!< This enum describes the maneuver performed by the host. */
     enum Maneuver { STRAIGHT, TURN_LEFT, TURN_RIGHT };
@@ -113,6 +113,8 @@ namespace agent_model {
         double pedal; //!< The actual pedal value [-1..1]. Negative values define a brake pedal
         double steering; //!< The actual steering value [-1..1]. Negative values define left turns
         Maneuver maneuver; //!< The general classification of the vehicle's path during the scenario
+        double dsIntersection; //!< Distance along s to the intersection (if ego is approaching an intersection)
+
     };
 
     /*!< A class to store horizon points. */
