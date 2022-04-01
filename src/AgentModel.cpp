@@ -163,9 +163,9 @@ void AgentModel::decisionProcessStop() {
     // add stop point because of destination point
     if (_input.signals[agent_model::NOS-1].id == agent_model::NOS)
     {
-        _state.decisions.stopping[agent_model::NOS-1].id = agent_model::NOS;
-        _state.decisions.stopping[agent_model::NOS-1].position = _input.vehicle.s + _input.signals[agent_model::NOS-1].ds;
-        _state.decisions.stopping[agent_model::NOS-1].standingTime = INFINITY;
+        _state.decisions.stopping[2].id = agent_model::NOS;
+        _state.decisions.stopping[2].position = _input.vehicle.s + _input.signals[agent_model::NOS-1].ds;
+        _state.decisions.stopping[2].standingTime = INFINITY;
     }
 
     // not yet decided about to stop or drive
@@ -205,7 +205,7 @@ void AgentModel::decisionProcessStop() {
     }
 
     // take closest signal (take traffic light even if 10 meters behind sign)
-    if (ds_rel_tls <= ds_rel_sgn+10) {
+    if (ds_rel_tls <= ds_rel_sgn + 10) {
         rel = rel_tls;
     } else {
         rel = rel_sgn;
@@ -350,7 +350,7 @@ void AgentModel::decisionProcessStop() {
                     }
 
                     // if no special case, check if ego reaches junction earlier
-                    if (rel->ds / _input.vehicle.v < t.dsIntersection / t.v) 
+                    if (_input.vehicle.dsIntersection / _input.vehicle.v < t.dsIntersection / t.v) 
                     {
                         continue;
                     } 
@@ -410,8 +410,9 @@ void AgentModel::decisionProcessStop() {
         // add stop point because of target
         if (stop)
         {
+            // try to stop 10m before intersection
             double ds_stop = std::max(0.0, _input.vehicle.dsIntersection - 10);
-            _state.decisions.stopping[1].id = agent_model::NOS + 1; //convention
+            _state.decisions.stopping[1].id = -1;
             _state.decisions.stopping[1].position = _input.vehicle.s + ds_stop;
             _state.decisions.stopping[1].standingTime = _param.stop.tSign;
         }
