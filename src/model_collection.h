@@ -100,13 +100,14 @@ namespace agent_model {
      * @param y The distance in the vehicle y direction
      * @param dx The actual velocity of the vehicle
      * @param dy The lateral velocity (derivative of y)
+     * @param dt The time increment
      * @param P The control parameter for the reference angle
      * @param D The control parameter for the reference angle derivative
      * @param theta The reference angle (will be set by function, for debugging)
      * @param dTheta The reference angle derivative (will be set by function, for debugging)
      * @return The resultant yaw rate
      */
-    double SalvucciAndGray(double x, double y, double dx, double dy, double P, double D, double &theta, double &dTheta);
+    double SalvucciAndGray(double x, double y, double dx, double dy, double dt, double P, double D, double &theta, double &dTheta);
 
 
     /**

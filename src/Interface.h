@@ -321,6 +321,7 @@ namespace agent_model {
     /*!< A class to store all internal states. */
     struct State {
         double simulationTime; //!< The actual simulation time
+        double deltaTime; //!< The time increment from the last simulation step.
         Decisions decisions; //!< Decision states.
         Conscious conscious; //!< Conscious states.
         Subconscious subconscious; //!< Subconscious states.
