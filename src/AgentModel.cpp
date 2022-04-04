@@ -51,6 +51,9 @@ void AgentModel::init() {
     // unset distance counter
     _memory.vehicle.s = 0.0;
 
+    // reset simulation stime
+    _state.simulationTime = 0.0;
+
     // unset lane change
     _memory.laneChange.switchLane = 0;
 
@@ -96,7 +99,8 @@ void AgentModel::step(double simulationTime) {
     _lateral_offset_interval.update(_input.vehicle.s, simulationTime);
     _lane_change_process_interval.update(_input.vehicle.s, simulationTime);
 
-    // set time
+    // set time and time increment
+    _state.deltaTime = simulationTime - _state.simulationTime;
     _state.simulationTime = simulationTime;
 
     // decisions
@@ -759,7 +763,8 @@ double AgentModel::subconsciousLateralControl() {
 
             // calculate salvucci and gray and apply factor
             reaction += _state.conscious.lateral.paths[j].factor
-                    * agent_model::SalvucciAndGray(x, y, dx, dy, P, D, _state.aux[idx + 0], _state.aux[idx + 1]);
+                * agent_model::SalvucciAndGray(x, y, dx, dy, _state.deltaTime, 
+                               P, D, _state.aux[idx + 0], _state.aux[idx + 1]);
 
             // save factored value
             _state.aux[31] += _state.conscious.lateral.paths[j].factor * _state.aux[idx];

@@ -123,7 +123,7 @@ namespace agent_model {
     }
 
 
-    double SalvucciAndGray(double x, double y, double dx, double dy, double P, double D,
+    double SalvucciAndGray(double x, double y, double dx, double dy, double dt, double P, double D,
             double &theta, double &dTheta) {
 
         using namespace std;
@@ -140,7 +140,7 @@ namespace agent_model {
         dTheta = (y * dx + x * dy) / (x * x + y * y);
 
         // calculate reaction
-        return P * theta + D * dTheta;
+        return P * theta * dt + D * dTheta;
 
     }
 
