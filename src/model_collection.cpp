@@ -140,7 +140,7 @@ namespace agent_model {
         dTheta = (y * dx + x * dy) / (x * x + y * y);
 
         // calculate reaction
-        return P * theta * dt + D * dTheta;
+        return P * theta + D * dTheta;
 
     }
 
