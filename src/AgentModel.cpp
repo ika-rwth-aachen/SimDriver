@@ -323,6 +323,13 @@ void AgentModel::decisionProcessStop() {
             // ego is on give way lane
             if (_state.conscious.stop.give_way)
             {
+                // stop for target already on intersection
+                if (t.position == agent_model::TargetPosition::TARGET_ON_INTERSECTION)
+                {
+                    stop = true;
+                    continue;
+                }
+
                 // stop if target prority not set (passive behavior)
                 if (t.priority == agent_model::TargetPriority::TARGET_PRIORITY_NOT_SET) 
                 {
@@ -335,7 +342,7 @@ void AgentModel::decisionProcessStop() {
                 {   
                     // special cases
 
-                    // opposite taget and left turn -> stop
+                    // opposite target and left turn -> stop
                     if (t.position == agent_model::TARGET_ON_OPPOSITE && _input.vehicle.maneuver == agent_model::Maneuver::TURN_LEFT)
                     {
                         if (_input.vehicle.maneuver == agent_model::Maneuver::TURN_LEFT)
@@ -362,13 +369,6 @@ void AgentModel::decisionProcessStop() {
                     }
                 }
 
-                // stop for target already on intersection
-                if (t.priority == agent_model::TargetPriority::TARGET_ON_INTERSECTION)
-                {
-                    stop = true;
-                    continue;
-                }
-
                 // stop for target on priority lane
                 if (t.priority == agent_model::TargetPriority::TARGET_ON_PRIORITY_LANE)
                 {
@@ -380,7 +380,7 @@ void AgentModel::decisionProcessStop() {
             // ego is not on priority and give way lane (right before left)
             if (!_state.conscious.stop.priority && !_state.conscious.stop.give_way) 
             {
-                if (t.position == agent_model::TARGET_ON_JUNCTION)
+                if (t.position == agent_model::TARGET_ON_INTERSECTION)
                 {
                     stop = true;
                     continue;

@@ -56,10 +56,10 @@ namespace agent_model {
     enum TrafficLightIcon { ICON_OTHER, ICON_NONE, ICON_ARROW_STRAIGHT_AHEAD, ICON_ARROW_LEFT, ICON_ARROW_RIGHT }; 
 
     /*!< This enum describes the priority of a target. */
-    enum TargetPriority { TARGET_ON_INTERSECTION, TARGET_ON_PRIORITY_LANE, TARGET_ON_GIVE_WAY_LANE, TARGET_PRIORITY_NOT_SET };
+    enum TargetPriority { TARGET_ON_PRIORITY_LANE, TARGET_ON_GIVE_WAY_LANE, TARGET_PRIORITY_NOT_SET };
 
     /*!< This enum describes the priority of a target. */
-    enum TargetPosition { TARGET_NOT_RELEVANT, TARGET_ON_PATH, TARGET_ON_JUNCTION, TARGET_ON_OPPOSITE, TARGET_ON_RIGHT, TARGET_ON_LEFT };
+    enum TargetPosition { TARGET_NOT_RELEVANT, TARGET_ON_PATH, TARGET_ON_INTERSECTION, TARGET_ON_OPPOSITE, TARGET_ON_RIGHT, TARGET_ON_LEFT };
 
     /*!< This enum describes the maneuver performed by the host. */
     enum Maneuver { STRAIGHT, TURN_LEFT, TURN_RIGHT };
