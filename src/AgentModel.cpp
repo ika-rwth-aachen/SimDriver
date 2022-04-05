@@ -154,18 +154,24 @@ void AgentModel::step(double simulationTime) {
 void AgentModel::decisionProcessStop() {
 
     // unset decision
-    for(auto &e : _state.decisions.stopping) {
-        e.id = std::numeric_limits<unsigned int>::max();
-        e.position = INFINITY;
-        e.standingTime = INFINITY;
-    }
+    _state.decisions.signal.id = std::numeric_limits<unsigned int>::max();
+    _state.decisions.signal.position = INFINITY;
+    _state.decisions.signal.standingTime = INFINITY;
+
+    _state.decisions.target.id = std::numeric_limits<unsigned int>::max();
+    _state.decisions.target.position = INFINITY;
+    _state.decisions.target.standingTime = INFINITY;
+
+    _state.decisions.destination.id = std::numeric_limits<unsigned int>::max();
+    _state.decisions.destination.position = INFINITY;
+    _state.decisions.destination.standingTime = INFINITY;
 
     // add stop point because of destination point
-    if (_input.signals[agent_model::NOS-1].id == agent_model::NOS)
+    if (_input.horizon.destinationPoint > 0)
     {
-        _state.decisions.stopping[2].id = agent_model::NOS;
-        _state.decisions.stopping[2].position = _input.vehicle.s + _input.signals[agent_model::NOS-1].ds;
-        _state.decisions.stopping[2].standingTime = INFINITY;
+        _state.decisions.destination.id = 3;
+        _state.decisions.destination.position = _input.vehicle.s + _input.horizon.destinationPoint;
+        _state.decisions.destination.standingTime = INFINITY;
     }
 
     // not yet decided about to stop or drive
@@ -225,9 +231,9 @@ void AgentModel::decisionProcessStop() {
                 _state.conscious.stop.give_way = true;
                 
                 // set stop point for INFINITY ( = until removed)
-                _state.decisions.stopping[0].id = rel->id;
-                _state.decisions.stopping[0].position = _input.vehicle.s + ds;
-                _state.decisions.stopping[0].standingTime = INFINITY;
+                _state.decisions.signal.id = 1;
+                _state.decisions.signal.position = _input.vehicle.s + ds;
+                _state.decisions.signal.standingTime = INFINITY;
                 
                 stop = true;
                 return;
@@ -238,9 +244,9 @@ void AgentModel::decisionProcessStop() {
                 _state.conscious.stop.priority = true;
 
                 // "remove" stop point (by setting standing time = 0)
-                _state.decisions.stopping[0].id = rel->id;
-                _state.decisions.stopping[0].position = _input.vehicle.s + ds;
-                _state.decisions.stopping[0].standingTime = 0;
+                _state.decisions.signal.id = 1;
+                _state.decisions.signal.position = _input.vehicle.s + ds;
+                _state.decisions.signal.standingTime = 0;
 
                 // drive if green and straight
                 if (_input.vehicle.maneuver == agent_model::Maneuver::STRAIGHT)
@@ -277,9 +283,9 @@ void AgentModel::decisionProcessStop() {
     // add stop point because of signal
     if (stop)
     {
-        _state.decisions.stopping[0].id = rel->id;
-        _state.decisions.stopping[0].position = _input.vehicle.s + rel->ds;
-        _state.decisions.stopping[0].standingTime = _param.stop.tSign;
+        _state.decisions.signal.id = 1;
+        _state.decisions.signal.position = _input.vehicle.s + rel->ds;
+        _state.decisions.signal.standingTime = _param.stop.tSign;
     }
 
     // if not yet decided to drive or stop -> consider targets
@@ -412,9 +418,9 @@ void AgentModel::decisionProcessStop() {
         {
             // try to stop 10m before intersection
             double ds_stop = std::max(0.0, _input.vehicle.dsIntersection - 10);
-            _state.decisions.stopping[1].id = -1;
-            _state.decisions.stopping[1].position = _input.vehicle.s + ds_stop;
-            _state.decisions.stopping[1].standingTime = _param.stop.tSign;
+            _state.decisions.target.id = 2;
+            _state.decisions.target.position = _input.vehicle.s + ds_stop;
+            _state.decisions.target.standingTime = _param.stop.tSign;
         }
     }
 }
@@ -595,13 +601,19 @@ void AgentModel::consciousStop() {
     using namespace std;
 
     // add new signals
-    for(auto &e : _state.decisions.stopping) {
+    agent_model::DecisionStopping signal = _state.decisions.signal;
+    agent_model::DecisionStopping target = _state.decisions.target;
+    agent_model::DecisionStopping destination = _state.decisions.destination;
 
-        // check position and add stop point
-        if(!std::isinf(e.position))
-            _stop_horizon.addStopPoint(e.id, e.position, e.standingTime);
+    // check position and add stop point
+    if(!std::isinf(signal.position))
+        _stop_horizon.addStopPoint(signal.id, signal.position, signal.standingTime);
 
-    }
+    if(!std::isinf(target.position))
+        _stop_horizon.addStopPoint(target.id, target.position, target.standingTime);
+
+    if(!std::isinf(destination.position))
+        _stop_horizon.addStopPoint(destination.id, destination.position, destination.standingTime);
 
     // get stop
     auto stop = _stop_horizon.getNextStop();

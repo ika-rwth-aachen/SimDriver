@@ -127,6 +127,7 @@ namespace agent_model {
         double egoLaneWidth[NOH]; //!< Width of the ego lane (in *m*)
         double rightLaneWidth[NOH]; //!< Width of the right lane (in *m*)
         double leftLaneWidth[NOH]; //!< Width of the left lane (in *m*)
+        double destinationPoint; //!< s coordinate of destination point (in *m*)
     };
 
     /*!< A class to store lane information. */
@@ -188,7 +189,9 @@ namespace agent_model {
     struct Decisions {
         int laneChange; //!< The decision to perform a lane change. The sign defines the direction. The value defines the number of lanes to be changed.
         Point lateral; //!< The decision to move to a defined lateral offset within a defined distance or time (mode=0: distance, mode=1: time).
-        DecisionStopping stopping[3]; //!< The decision information for a stop. Stop could be due to signal, target or destination point.
+        DecisionStopping signal; //!< The decision information caused by a signal.
+        DecisionStopping target; //!< The decision information caused by a target.
+        DecisionStopping destination; //!< The decision information caused by a destination.
     };
 
     /*!< A class to store the internal state for the conscious&#x2F;velocity component. */

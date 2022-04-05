@@ -106,7 +106,7 @@ namespace agent_model {
             _elements[id] = {sStop, _sActual, INFINITY, standingTime, false};
 
             return true;
-
+            
         }
 
 
