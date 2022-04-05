@@ -156,8 +156,6 @@ namespace agent_model {
         TrafficLightColor color; //!< Color of the light bulb.
         TrafficLightIcon icon; //!< Icon/Shape of the traffic light.
         bool subsignal;     //!< if true sign is subsignal to TLS and only valid in certain situations
-        bool is_out_of_service; //!< indicates that TLS is out of service if true
-        int pairedSignalID[3]; //!< Subsignals are paired to 3 Light IDs
         bool sign_is_in_use;   //!< indicates that subsign is in use (all paired TLS signals are out of service)
     };
 
