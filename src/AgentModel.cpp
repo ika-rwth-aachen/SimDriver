@@ -188,8 +188,6 @@ void AgentModel::decisionProcessStop() {
 
     for(auto &e : _input.signals) 
     {
-        if (e.id == agent_model::NOS) continue;
-
         if (e.type == agent_model::SignalType::SIGNAL_TLS && 
             e.ds >= 0 && e.ds < ds_rel_tls) 
         {
