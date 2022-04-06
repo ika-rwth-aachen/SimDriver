@@ -56,7 +56,10 @@ namespace agent_model {
     enum TrafficLightIcon { ICON_OTHER, ICON_NONE, ICON_ARROW_STRAIGHT_AHEAD, ICON_ARROW_LEFT, ICON_ARROW_RIGHT }; 
 
     /*!< This enum describes the priority of a target. */
-    enum TargetPriority { TARGET_ON_INTERSECTION, TARGET_ON_PRIORITY_LANE, TARGET_ON_GIVE_WAY_LANE, TARGET_PRIORITY_NOT_SET};
+    enum TargetPriority { TARGET_ON_PRIORITY_LANE, TARGET_ON_GIVE_WAY_LANE, TARGET_PRIORITY_NOT_SET };
+
+    /*!< This enum describes the priority of a target. */
+    enum TargetPosition { TARGET_NOT_RELEVANT, TARGET_ON_PATH, TARGET_ON_INTERSECTION, TARGET_ON_OPPOSITE, TARGET_ON_RIGHT, TARGET_ON_LEFT };
 
     /*!< This enum describes the maneuver performed by the host. */
     enum Maneuver { STRAIGHT, TURN_LEFT, TURN_RIGHT };
@@ -110,6 +113,8 @@ namespace agent_model {
         double pedal; //!< The actual pedal value [-1..1]. Negative values define a brake pedal
         double steering; //!< The actual steering value [-1..1]. Negative values define left turns
         Maneuver maneuver; //!< The general classification of the vehicle's path during the scenario
+        double dsIntersection; //!< Distance along s to the intersection (if ego is approaching an intersection)
+
     };
 
     /*!< A class to store horizon points. */
@@ -122,6 +127,7 @@ namespace agent_model {
         double egoLaneWidth[NOH]; //!< Width of the ego lane (in *m*)
         double rightLaneWidth[NOH]; //!< Width of the right lane (in *m*)
         double leftLaneWidth[NOH]; //!< Width of the left lane (in *m*)
+        double destinationPoint; //!< s coordinate of destination point (in *m*) -1 if not set
     };
 
     /*!< A class to store lane information. */
@@ -150,8 +156,6 @@ namespace agent_model {
         TrafficLightColor color; //!< Color of the light bulb.
         TrafficLightIcon icon; //!< Icon/Shape of the traffic light.
         bool subsignal;     //!< if true sign is subsignal to TLS and only valid in certain situations
-        bool is_out_of_service; //!< indicates that TLS is out of service if true
-        int pairedSignalID[3]; //!< Subsignals are paired to 3 Light IDs
         bool sign_is_in_use;   //!< indicates that subsign is in use (all paired TLS signals are out of service)
     };
 
@@ -169,6 +173,7 @@ namespace agent_model {
         Dimensions size; //!< Width and length of the target.
         double dsIntersection; //!< Distance along s to the intersection (if target is approaching an intersection)
         TargetPriority priority; //!< Priority of the target's lane. Used to determine right of way.
+        TargetPosition position; //!< Area in junction of target. Used to determine right of way.
     };
 
     /*!< A class to store the internal state for the decision&#x2F;stopping component. */
@@ -182,7 +187,9 @@ namespace agent_model {
     struct Decisions {
         int laneChange; //!< The decision to perform a lane change. The sign defines the direction. The value defines the number of lanes to be changed.
         Point lateral; //!< The decision to move to a defined lateral offset within a defined distance or time (mode=0: distance, mode=1: time).
-        DecisionStopping stopping[NOS]; //!< The decision information for a stop.
+        DecisionStopping signal; //!< The decision information caused by a signal.
+        DecisionStopping target; //!< The decision information caused by a target.
+        DecisionStopping destination; //!< The decision information caused by a destination.
     };
 
     /*!< A class to store the internal state for the conscious&#x2F;velocity component. */
@@ -196,6 +203,8 @@ namespace agent_model {
         double ds; //!< The actual distance to the stop point. (in *m*)
         double dsMax; //!< The reference distance at which the driver decides to stop (in *m*)
         bool standing; //!< A flag to define if the driver has stopped for the desired stop.
+        bool priority; //!< A flag to define if the driver drives on a priority lane.
+        bool give_way; //!< A flag to define if the driver drives on a give way lane.
     };
 
     /*!< A class to store the internal state for the conscious&#x2F;follow component. */

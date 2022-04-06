@@ -96,7 +96,8 @@ namespace agent_model {
             }
             // only add if not already added
             if(_elements.find(id) != _elements.end())
-                return false;
+                if (fabs(_elements[id].s - sStop) < 0.5)
+                    return false;
 
             // only add when distance is large enough
             if(_sActual - sStop >= DELETE_AFTER_DISTANCE - EPS_DISTANCE)
@@ -106,7 +107,7 @@ namespace agent_model {
             _elements[id] = {sStop, _sActual, INFINITY, standingTime, false};
 
             return true;
-
+            
         }
 
 
