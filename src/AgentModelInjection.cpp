@@ -128,7 +128,10 @@ namespace agent_model {
         tree->registerValue(data, owner);
         tree->laneChange.registerValue(&data->laneChange, owner);
         registerTree(&tree->lateral, &data->lateral, owner);
-        registerStructArray(&tree->stopping[0], &data->stopping[0], owner, {NOS});
+        registerTree(&tree->signal, &data->signal, owner);
+        registerTree(&tree->target, &data->target, owner);
+        registerTree(&tree->destination, &data->destination, owner);
+        //registerStructArray(&tree->stopping[0], &data->stopping[0], owner, {NOS});
     }
 
     void registerTree(__ConsciousVelocity *tree, ConsciousVelocity *data, const void *owner) {
