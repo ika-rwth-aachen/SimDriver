@@ -104,7 +104,7 @@ namespace agent_model {
         Injection<unsigned int> id;
         Injection<double> ds;
         Injection<SignalType> type;
-        Injection<int> value;
+        Injection<double> value;
     };
 
     struct __Target : public Injection<Target> {
@@ -131,7 +131,9 @@ namespace agent_model {
         using Injection<Decisions>::operator =;
         Injection<int> laneChange;
         __Point lateral;
-        __DecisionStopping stopping[NOS];
+        __DecisionStopping signal;
+        __DecisionStopping target;
+        __DecisionStopping destination;
     };
 
     struct __ConsciousVelocity : public Injection<ConsciousVelocity> {

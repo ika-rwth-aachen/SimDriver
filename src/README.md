@@ -3,7 +3,7 @@
 ## Capability description
 
 - [x] 1. Holding the vehicle in standstill by using the _brake pedal_
-- [x] 2. Controlling an _desired acceleration_ by using _drive_ and _brake pedal_
+- [x] 2. Controlling a _desired acceleration_ by using _drive_ and _brake pedal_
 - [x] 3. Controlling a _desired speed_
 - [x] 4. Controlling predictively a _desired speed_ in a given _distance_
 - [x] 5. Controlling the vehicle to stop within a _desired distance_
