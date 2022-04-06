@@ -104,7 +104,7 @@ namespace agent_model {
         Injection<unsigned int> id;
         Injection<double> ds;
         Injection<SignalType> type;
-        Injection<int> value;
+        Injection<double> value;
     };
 
     struct __Target : public Injection<Target> {
