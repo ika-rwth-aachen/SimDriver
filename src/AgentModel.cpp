@@ -116,7 +116,7 @@ void AgentModel::step(double simulationTime) {
     consciousStop();                    // done: Test 3.3b, 3.3c
     consciousFollow();                  // done: Test 8.1, 8.2, 8.3
     //consciousLaneChange();              // open
-	_state.conscious.lateral.paths[0].factor = 1;
+    _state.conscious.lateral.paths[0].factor = 1; // disable LC for now
     consciousLateralOffset();           // done: Test 7.3
     consciousReferencePoints();         // done: Test 7.1, 7.2, 7.3, 7.4
 
@@ -131,7 +131,6 @@ void AgentModel::step(double simulationTime) {
     double kappa   = subconsciousLateralControl(); // done: Test 6.1, 6.2, 6.3, 6.4	
     // calculate resulting acceleration
     double aRes = _param.velocity.a * (1.0 - rSpeed - rStop - rFollow);
-    //std::cout << "reactions: " << rSpeed << ","  << "," << rStop << "," << rFollow << "\n";
 
     // set desired values
     _state.subconscious.a     = std::min(std::max(-10.0, aRes), 10.0);           // done: Test 1.3
