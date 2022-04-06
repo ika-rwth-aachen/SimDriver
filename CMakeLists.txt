@@ -6,7 +6,7 @@ set(CMAKE_CXX_STANDARD 14)
 
 # options
 option(CREATE_DOXYGEN_TARGET "Creates the doxygen documentation if set." OFF)
-option(BUILD_WITH_INJECTION "Building the agent model with injection functionality." ON)
+option(BUILD_WITH_INJECTION "Building the agent model with injection functionality." OFF)
 
 
 # documentation
@@ -60,4 +60,8 @@ endif(BUILD_WITH_INJECTION)
 
 
 # library code
+if(UNIX)
+    set( CMAKE_CXX_FLAGS  "${CMAKE_CXX_FLAGS} -fPIC" )
+    set( CMAKE_C_FLAGS  "${CMAKE_C_FLAGS} -fPIC" )
+endif()
 add_subdirectory(src/)

@@ -37,6 +37,8 @@ namespace agent_model {
     static const unsigned int NOCP = 3; //!< Number of reference points per control path.
     static const unsigned int NOA = 32; //!< Number of auxiliary states.
 
+    static const unsigned int NOTL = 32; //!< Maximum defined number of traffic lights.
+
 
     /*!< This enum describes a access state of an area. */
     enum Accessibility { ACC_NOT_SET, ACC_ACCESSIBLE, ACC_NOT_ALLOWED, ACC_NOT_ACCESSIBLE };
@@ -45,7 +47,22 @@ namespace agent_model {
     enum DrivingDirection { DD_FORWARDS, DD_BACKWARDS, DD_BOTH, DD_NONE, DD_NOT_SET };
 
     /*!< This enum describes the type of a road signal. */
-    enum SignalType { SIGNAL_NOT_SET, SIGNAL_STOP, SIGNAL_TLS, SIGNAL_SPEED_LIMIT };
+    enum SignalType { SIGNAL_NOT_SET, SIGNAL_STOP, SIGNAL_TLS, SIGNAL_SPEED_LIMIT, SIGNAL_YIELD, SIGNAL_PRIORITY };
+
+    /*!< This enum describes the color of the traffic lights. */ //For now just colors.Todo: Add different icon color combinations
+    enum TrafficLightColor { COLOR_RED, COLOR_YELLOW, COLOR_GREEN }; 
+
+    /*!< This enum describes the icon of the traffic lights. */ //For now just colors.Todo: Add different icon color combinations
+    enum TrafficLightIcon { ICON_OTHER, ICON_NONE, ICON_ARROW_STRAIGHT_AHEAD, ICON_ARROW_LEFT, ICON_ARROW_RIGHT }; 
+
+    /*!< This enum describes the priority of a target. */
+    enum TargetPriority { TARGET_ON_PRIORITY_LANE, TARGET_ON_GIVE_WAY_LANE, TARGET_PRIORITY_NOT_SET };
+
+    /*!< This enum describes the priority of a target. */
+    enum TargetPosition { TARGET_NOT_RELEVANT, TARGET_ON_PATH, TARGET_ON_INTERSECTION, TARGET_ON_OPPOSITE, TARGET_ON_RIGHT, TARGET_ON_LEFT };
+
+    /*!< This enum describes the maneuver performed by the host. */
+    enum Maneuver { STRAIGHT, TURN_LEFT, TURN_RIGHT };
 
 
 
@@ -53,7 +70,16 @@ namespace agent_model {
     struct Position {
         double x; //!< The x ordinate. (in *m*)
         double y; //!< The y ordinate. (in *m*)
+        Position(): x(0.0), y(0.0) {}
+        Position(double pX, double pY) : x(pX), y(pY) {}
+        
+        bool operator==(const Position& other)
+        {
+            return x == other.x && y == other.y;
+        }
     };
+    
+
 
     /*!< A 2D position with motion and a influence factor. */
     struct DynamicPosition {
@@ -86,6 +112,9 @@ namespace agent_model {
         double d; //!< The lateral offset of the vehicle to the current reference line of the track (e.g. lane center). (in *m*)
         double pedal; //!< The actual pedal value [-1..1]. Negative values define a brake pedal
         double steering; //!< The actual steering value [-1..1]. Negative values define left turns
+        Maneuver maneuver; //!< The general classification of the vehicle's path during the scenario
+        double dsIntersection; //!< Distance along s to the intersection (if ego is approaching an intersection)
+
     };
 
     /*!< A class to store horizon points. */
@@ -98,6 +127,7 @@ namespace agent_model {
         double egoLaneWidth[NOH]; //!< Width of the ego lane (in *m*)
         double rightLaneWidth[NOH]; //!< Width of the right lane (in *m*)
         double leftLaneWidth[NOH]; //!< Width of the left lane (in *m*)
+        double destinationPoint; //!< s coordinate of destination point (in *m*) -1 if not set
     };
 
     /*!< A class to store lane information. */
@@ -122,8 +152,13 @@ namespace agent_model {
         unsigned int id; //!< Unique ID of the signal
         double ds; //!< Distance to the sign from the current position along the reference line. (in *m*)
         SignalType type; //!< Type of the signal.
-        int value; //!< Value of the signal.
+        double value; //!< Value of the signal.
+        TrafficLightColor color; //!< Color of the light bulb.
+        TrafficLightIcon icon; //!< Icon/Shape of the traffic light.
+        bool subsignal;     //!< if true sign is subsignal to TLS and only valid in certain situations
+        bool sign_is_in_use;   //!< indicates that subsign is in use (all paired TLS signals are out of service)
     };
+
 
     /*!< A class to store target information. */
     struct Target {
@@ -136,6 +171,9 @@ namespace agent_model {
         double psi; //!< Relative yaw angle of the target vehicle to the ego yaw angle. (in *rad*)
         int lane; //!< Lane ID of the actual lane of the target relative to driver's lane.
         Dimensions size; //!< Width and length of the target.
+        double dsIntersection; //!< Distance along s to the intersection (if target is approaching an intersection)
+        TargetPriority priority; //!< Priority of the target's lane. Used to determine right of way.
+        TargetPosition position; //!< Area in junction of target. Used to determine right of way.
     };
 
     /*!< A class to store the internal state for the decision&#x2F;stopping component. */
@@ -149,7 +187,9 @@ namespace agent_model {
     struct Decisions {
         int laneChange; //!< The decision to perform a lane change. The sign defines the direction. The value defines the number of lanes to be changed.
         Point lateral; //!< The decision to move to a defined lateral offset within a defined distance or time (mode=0: distance, mode=1: time).
-        DecisionStopping stopping[NOS]; //!< The decision information for a stop.
+        DecisionStopping signal; //!< The decision information caused by a signal.
+        DecisionStopping target; //!< The decision information caused by a target.
+        DecisionStopping destination; //!< The decision information caused by a destination.
     };
 
     /*!< A class to store the internal state for the conscious&#x2F;velocity component. */
@@ -163,6 +203,8 @@ namespace agent_model {
         double ds; //!< The actual distance to the stop point. (in *m*)
         double dsMax; //!< The reference distance at which the driver decides to stop (in *m*)
         bool standing; //!< A flag to define if the driver has stopped for the desired stop.
+        bool priority; //!< A flag to define if the driver drives on a priority lane.
+        bool give_way; //!< A flag to define if the driver drives on a give way lane.
     };
 
     /*!< A class to store the internal state for the conscious&#x2F;follow component. */
