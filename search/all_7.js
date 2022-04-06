@@ -10,5 +10,6 @@ var searchData=
   ['getscale',['getScale',['../classagent__model_1_1DistanceTimeInterval.html#a71f441c1ab73753538c2a8a981565008',1,'agent_model::DistanceTimeInterval']]],
   ['getscaledfactor',['getScaledFactor',['../classagent__model_1_1DistanceTimeInterval.html#a87a04df8ce97df9801bcc9f0dcb8e68c',1,'agent_model::DistanceTimeInterval']]],
   ['getspeedat',['getSpeedAt',['../classagent__model_1_1VelocityHorizon.html#aeb89dadd5c059952f743643d2de314ff',1,'agent_model::VelocityHorizon']]],
-  ['getstate',['getState',['../classagent__model_1_1Interface.html#aaf2ea2e63f9f46e0205a5711fc19a63f',1,'agent_model::Interface::getState()'],['../classagent__model_1_1Interface.html#a2fb2b009dd07b295cb61bd7552a140a1',1,'agent_model::Interface::getState() const']]]
+  ['getstate',['getState',['../classagent__model_1_1Interface.html#aaf2ea2e63f9f46e0205a5711fc19a63f',1,'agent_model::Interface::getState()'],['../classagent__model_1_1Interface.html#a2fb2b009dd07b295cb61bd7552a140a1',1,'agent_model::Interface::getState() const']]],
+  ['give_5fway',['give_way',['../structagent__model_1_1ConsciousStop.html#a62675e43715d610f01f33f48324121a0',1,'agent_model::ConsciousStop']]]
 ];

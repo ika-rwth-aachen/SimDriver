@@ -1,12 +1,19 @@
 var searchData=
 [
-  ['t',['T',['../structagent__model_1_1ParameterStopping.html#ad3463a151479141ada5e613c060007f0',1,'agent_model::ParameterStopping']]],
-  ['targets',['targets',['../structagent__model_1_1Input.html#a960719b94667fb8d005e46e94012de08',1,'agent_model::Input']]],
-  ['thw',['thw',['../structagent__model_1_1ParameterSteering.html#a427f26e9f677a294f5310282f6dbf3fa',1,'agent_model::ParameterSteering']]],
-  ['thwmax',['thwMax',['../structagent__model_1_1ParameterVelocityControl.html#a4fd295a93b2a9aa7bd12772803f7a838',1,'agent_model::ParameterVelocityControl::thwMax()'],['../structagent__model_1_1ParameterFollowing.html#a47f6665dbec8d5b3aedc591a96f8bc16',1,'agent_model::ParameterFollowing::thwMax()']]],
-  ['time',['time',['../structagent__model_1_1Point.html#aee2ba79612c3abaf5f3af41a62bb430f',1,'agent_model::Point::time()'],['../structagent__model_1_1MemoryLateral.html#a1ddad9094fe73e1a9cb9da924bab49ec',1,'agent_model::MemoryLateral::time()'],['../structagent__model_1_1ParameterLaneChange.html#abb35f87cbca0bbb7c99d7cffa83eb20e',1,'agent_model::ParameterLaneChange::time()']]],
-  ['timeheadway',['timeHeadway',['../structagent__model_1_1ParameterFollowing.html#a4f111a400c800a47ccd98836bcc5fb64',1,'agent_model::ParameterFollowing']]],
-  ['tmax',['TMax',['../structagent__model_1_1ParameterStopping.html#a648cd57934f30b2eec9ee13d346effbd',1,'agent_model::ParameterStopping']]],
-  ['tsign',['tSign',['../structagent__model_1_1ParameterStopping.html#a1b2a1faa948b39faf6166f667b2a909e',1,'agent_model::ParameterStopping']]],
-  ['type',['type',['../structagent__model_1_1Signal.html#ade8eae5983f394f08c523d002201e0ac',1,'agent_model::Signal']]]
+  ['s',['s',['../structagent__model_1_1VehicleState.html#adc317c2222db2384ed27699298e0c5d5',1,'agent_model::VehicleState::s()'],['../structagent__model_1_1MemoryVehicle.html#a18370de7cd5dfc9a1004ed8d649e34a4',1,'agent_model::MemoryVehicle::s()'],['../structagent__model_1_1VelocityHorizon_1_1PredictionPoint.html#a70dc127b6ee5d78b690a4b422b5f5281',1,'agent_model::VelocityHorizon::PredictionPoint::s()']]],
+  ['scont',['sCont',['../structagent__model_1_1VelocityHorizon_1_1PredictionPoint.html#af65fa95f3c253d0cfaeb7d016750641a',1,'agent_model::VelocityHorizon::PredictionPoint']]],
+  ['sign_5fis_5fin_5fuse',['sign_is_in_use',['../structagent__model_1_1Signal.html#a1a206a7b789ef5c33d316550e63c0037',1,'agent_model::Signal']]],
+  ['signal',['signal',['../structagent__model_1_1Decisions.html#a4df057a43007d7d36f8d26a728c24254',1,'agent_model::Decisions']]],
+  ['signals',['signals',['../structagent__model_1_1Input.html#aee5aa86a995da983872946fa3614230a',1,'agent_model::Input']]],
+  ['simulationtime',['simulationTime',['../structagent__model_1_1State.html#acde419e84407d5f588138ba0aba3fc9d',1,'agent_model::State']]],
+  ['size',['size',['../structagent__model_1_1Target.html#afbb2c8172f3ba08264beb55277f4f299',1,'agent_model::Target::size()'],['../structagent__model_1_1ParameterVehicle.html#a6d3ecf74ef6824c43800659ef8057830',1,'agent_model::ParameterVehicle::size()']]],
+  ['standing',['standing',['../structagent__model_1_1ConsciousStop.html#a1f12aca56a386ef049b39be0a6ea3bcc',1,'agent_model::ConsciousStop::standing()'],['../structagent__model_1_1ConsciousFollow.html#af387e62c7e261e6714036459b17e4353',1,'agent_model::ConsciousFollow::standing()']]],
+  ['standingtime',['standingTime',['../structagent__model_1_1DecisionStopping.html#afba25a14ce6568df9aea9e922f8251ef',1,'agent_model::DecisionStopping']]],
+  ['startdistance',['startDistance',['../structagent__model_1_1MemoryLateral.html#a1e2c1462b26ef0275f5bc1c83820aea1',1,'agent_model::MemoryLateral']]],
+  ['starttime',['startTime',['../structagent__model_1_1MemoryLateral.html#a106bf8707ffff9ece343b463fe14ab08',1,'agent_model::MemoryLateral::startTime()'],['../structagent__model_1_1MemoryLaneChange.html#a11c12272152a297131dcadbb0c537748',1,'agent_model::MemoryLaneChange::startTime()']]],
+  ['steering',['steering',['../structagent__model_1_1VehicleState.html#a0562a0f29fde6550e0e9741a7a751693',1,'agent_model::VehicleState::steering()'],['../structagent__model_1_1Subconscious.html#a402b0df444291d026b1aa59529e6009f',1,'agent_model::Subconscious::steering()'],['../structagent__model_1_1Parameters.html#ad48cd5ba462b75629aebbde5930f76c5',1,'agent_model::Parameters::steering()']]],
+  ['stop',['stop',['../structagent__model_1_1Conscious.html#ad3ce5e889364a732fd37f2931db323b3',1,'agent_model::Conscious::stop()'],['../structagent__model_1_1Parameters.html#afaac191aa33c86b0e019ec4f404bc8e5',1,'agent_model::Parameters::stop()']]],
+  ['subconscious',['subconscious',['../structagent__model_1_1State.html#a0ba57dbef5e23c36fe21ca73fb85e2ae',1,'agent_model::State']]],
+  ['subsignal',['subsignal',['../structagent__model_1_1Signal.html#a4a9997b313520ee5b918218c4fa69ee7',1,'agent_model::Signal']]],
+  ['switchlane',['switchLane',['../structagent__model_1_1MemoryLaneChange.html#a28fc8145a45f8a858de5e2702d455100',1,'agent_model::MemoryLaneChange']]]
 ];
