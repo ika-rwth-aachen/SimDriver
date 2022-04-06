@@ -305,7 +305,7 @@ void AgentModel::decisionProcessStop() {
             if (t.position == agent_model::TARGET_NOT_RELEVANT) 
                 continue;
 
-            // ego is on priority lane and turns left
+            // ego is on priority
             if (_state.conscious.stop.priority)
             {   
                 // normaly do not stop when on priority lane
