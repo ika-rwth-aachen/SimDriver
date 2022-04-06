@@ -128,17 +128,14 @@ void AgentModel::step(double simulationTime) {
     double rStop   = subconsciousStop();           // done: Test 3.3, 3.6
     double rFollow = subconsciousFollow();         // done: Test 3.4, 3.5, 3.6
     double pedal   = subconsciousStartStop();      // done: Test 1.1, 1.2
-    double kappa   = subconsciousLateralControl() ;//+ 3./6 * (_input.horizon.kappa[0]+_input.horizon.kappa[1]+_input.horizon.kappa[2]+_input.horizon.kappa[3]+_input.horizon.kappa[4]+_input.horizon.kappa[5]); // done: Test 6.1, 6.2, 6.3, 6.4
-    //std::cout << "current hor kappa: " << _input.horizon.kappa[0] << "\n";
+    double kappa   = subconsciousLateralControl(); // done: Test 6.1, 6.2, 6.3, 6.4	
     // calculate resulting acceleration
     double aRes = _param.velocity.a * (1.0 - rSpeed - rStop - rFollow);
     //std::cout << "reactions: " << rSpeed << ","  << "," << rStop << "," << rFollow << "\n";
 
     // set desired values
     _state.subconscious.a     = std::min(std::max(-10.0, aRes), 10.0);           // done: Test 1.3
-    // d penalty:
-    double pen = 0;//int((_input.vehicle.d>0) - (_input.vehicle.d<0) ) * _input.vehicle.d *_input.vehicle.d * 0.25;
-    _state.subconscious.kappa = kappa - pen;          // done: Test 4.1, 4.2
+    _state.subconscious.kappa = kappa;          // done: Test 4.1, 4.2
     _state.subconscious.pedal = pedal;          // done: Test 1.4
     _state.subconscious.steering = INFINITY;
 
@@ -438,7 +435,6 @@ void AgentModel::decisionProcessStop() {
 }
 
 void AgentModel::decisionLaneChange() {
-
 
     // check positions
     double dsLF = INFINITY;
