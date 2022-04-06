@@ -94,9 +94,10 @@ namespace agent_model {
                 _elements[id].passed = true;
                 return true;
             }
-            // only add if not already added - replace stop point from now on
-            //if(_elements.find(id) != _elements.end())
-            //    return false;
+            // only add if not already added
+            if(_elements.find(id) != _elements.end())
+                if (fabs(_elements[id].s - sStop) < 0.5)
+                    return false;
 
             // only add when distance is large enough
             if(_sActual - sStop >= DELETE_AFTER_DISTANCE - EPS_DISTANCE)
