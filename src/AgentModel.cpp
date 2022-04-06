@@ -288,6 +288,10 @@ void AgentModel::decisionProcessStop() {
 
     // if not yet decided to drive or stop -> consider targets
     if (!drive && !stop) {   
+
+        // ignore if not approaching intersection
+        if (_input.vehicle.dsIntersection == INFINITY)
+            return;
         
         // ignore if on priority lane and driving straight (or right - for now)
         if (_state.conscious.stop.priority && 
@@ -303,6 +307,10 @@ void AgentModel::decisionProcessStop() {
 
             // ignore targets not in junction area
             if (t.position == agent_model::TARGET_NOT_RELEVANT) 
+                continue;
+                
+            // ignore targets on path
+            if (t.position == agent_model::TARGET_ON_PATH) 
                 continue;
 
             // ego is on priority
@@ -353,12 +361,18 @@ void AgentModel::decisionProcessStop() {
                         stop = true;
                         continue;
                     }
-                    
-                    // right target and right turn -> continue
-                    else if (t.position == agent_model::TARGET_ON_RIGHT && _input.vehicle.maneuver == agent_model::Maneuver::TURN_RIGHT)
+                       
+                    // opposite target and not left turn -> continue
+                    if (t.position == agent_model::TARGET_ON_OPPOSITE && _input.vehicle.maneuver != agent_model::Maneuver::TURN_LEFT)
                     {
                         continue;
                     }
+
+                    // right target and right turn -> continue
+                    if (t.position == agent_model::TARGET_ON_RIGHT && _input.vehicle.maneuver == agent_model::Maneuver::TURN_RIGHT)
+                    {
+                        continue;
+                    }                 
 
                     // if no special case, check if ego reaches junction earlier
                     if (_input.vehicle.dsIntersection / _input.vehicle.v < t.dsIntersection / t.v) 
