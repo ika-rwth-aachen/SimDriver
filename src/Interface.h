@@ -127,7 +127,7 @@ namespace agent_model {
         double egoLaneWidth[NOH]; //!< Width of the ego lane (in *m*)
         double rightLaneWidth[NOH]; //!< Width of the right lane (in *m*)
         double leftLaneWidth[NOH]; //!< Width of the left lane (in *m*)
-        double destinationPoint; //!< s coordinate of destination point (in *m*)
+        double destinationPoint; //!< s coordinate of destination point (in *m*) -1 if not set
     };
 
     /*!< A class to store lane information. */
