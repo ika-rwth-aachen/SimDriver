@@ -10,7 +10,6 @@ var searchData=
   ['delete_5fafter_5fdistance',['DELETE_AFTER_DISTANCE',['../classagent__model_1_1StopHorizon.html#a6b899b377f1d1479fcb3eebd9ec05466',1,'agent_model::StopHorizon']]],
   ['delta',['delta',['../structagent__model_1_1ParameterVelocityControl.html#a4d913cde2af8c293e283645ca14f1924',1,'agent_model::ParameterVelocityControl']]],
   ['deltapred',['deltaPred',['../structagent__model_1_1ParameterVelocityControl.html#a75cd38acaaffbbb55ced31b93e61f251',1,'agent_model::ParameterVelocityControl']]],
-  ['deltatime',['deltaTime',['../structagent__model_1_1State.html#aa48c472d220212c8de3ec63cb6dd9566',1,'agent_model::State']]],
   ['destination',['destination',['../structagent__model_1_1Decisions.html#a1cce7ed9776ac6aa8506db379416f038',1,'agent_model::Decisions']]],
   ['destinationpoint',['destinationPoint',['../structagent__model_1_1Horizon.html#a2456ab18a1e6bd860e69225005b62288',1,'agent_model::Horizon']]],
   ['dimensions',['Dimensions',['../structagent__model_1_1Dimensions.html',1,'agent_model']]],
