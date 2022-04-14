@@ -135,10 +135,12 @@ namespace agent_model {
             return 0.0;
         }
 
-        // calculate theta and dTheta
+        // calculate dTheta and Theta
+        if (theta != 0)
+            dTheta = theta - atan2(y, x);
         theta = atan2(y, x);
-        dTheta = (y * dx + x * dy) / (x * x + y * y);
-
+        //dTheta = (y * dx + x * dy) / (x * x + y * y);
+        
         // calculate reaction
         return P * theta + D * dTheta;
 
