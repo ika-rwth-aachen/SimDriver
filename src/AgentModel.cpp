@@ -424,8 +424,12 @@ void AgentModel::decisionProcessStop() {
         // add stop point because of target
         if (stop)
         {
-            // try to stop 10m before intersection
-            double ds_stop = std::max(0.0, _input.vehicle.dsIntersection - 10);
+            // try to stop 10m before intersection or take ds of the signal
+            double ds_stop;
+            if (std::isinf(ds_rel_sgn))
+                ds_stop = std::max(0.0, _input.vehicle.dsIntersection - 10);
+            else
+                ds_stop = std::max(0.0, rel->ds);
             _state.decisions.target.id = 2;
             _state.decisions.target.position = _input.vehicle.s + ds_stop;
             _state.decisions.target.standingTime = _param.stop.tSign;
