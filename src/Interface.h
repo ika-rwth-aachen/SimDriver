@@ -138,6 +138,7 @@ namespace agent_model {
         double closed; //!< Distance on the lane until the lane is closed. (in *m*)
         DrivingDirection dir; //!< The driving direction of the lane related to the ego direction.
         Accessibility access; //!< The accessibility of the lane from the ego lane.
+        bool lane_change; //!< Flag if lane change is required to reach destination.
     };
 
     /*!< A class to store control path information */
