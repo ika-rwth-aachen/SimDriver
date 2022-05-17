@@ -115,8 +115,7 @@ void AgentModel::step(double simulationTime) {
     consciousVelocity();                // done: Test 9.1, 9.2, 9.3
     consciousStop();                    // done: Test 3.3b, 3.3c
     consciousFollow();                  // done: Test 8.1, 8.2, 8.3
-    //consciousLaneChange();              // open
-    _state.conscious.lateral.paths[0].factor = 1; // disable LC for now
+    consciousLaneChange();              // open
     consciousLateralOffset();           // done: Test 7.3
     consciousReferencePoints();         // done: Test 7.1, 7.2, 7.3, 7.4
 
@@ -442,28 +441,28 @@ void AgentModel::decisionLaneChange() {
     // check for route-based lane changes
 
     // get current lanes
-    agent_model::Lane ego;
-    agent_model::Lane left;
-    agent_model::Lane right;
+    agent_model::Lane* ego = nullptr;
+    agent_model::Lane* left = nullptr;
+    agent_model::Lane* right = nullptr;
 
     for (auto &lane : _input.lanes) {
 
         if (lane.id == 0) { 
-            ego = lane;
+            ego = &lane;
         }   
         if (lane.id == 1) { 
-            left = lane;
+            left = &lane;
         }   
         if (lane.id == -1) { 
-            right = lane;
+            right = &lane;
         } 
     }
 
     // if desired lane_change, right/left lane accessible, and route longer 
-    if (ego.lane_change && left.access && left.route >= ego.route) {
+    if (ego && left && ego->lane_change && left->access == agent_model::ACC_ACCESSIBLE && left->route >= ego->route) {
         _state.decisions.laneChange = 1;
     }
-    else if (ego.lane_change && right.access && right.route >= ego.route) {
+    else if (ego && right && ego->lane_change && right->access == agent_model::ACC_ACCESSIBLE && right->route >= ego->route) {
         _state.decisions.laneChange = -1;
     }
     else {
@@ -543,7 +542,6 @@ void AgentModel::decisionLaneChange() {
         _state.decisions.laneChange = -1;
     else
         _state.decisions.laneChange = 0;
-
 }
 
 
@@ -731,6 +729,7 @@ void AgentModel::consciousLaneChange() {
     }
 
     // calculate factor and limit
+    _memory.laneChange.switchLane = 0;
     auto factor = _lane_change_process_interval.getScaledFactor();
     factor = std::max(-1.0, std::min(1.0, factor));
 
