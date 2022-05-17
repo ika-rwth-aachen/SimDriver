@@ -457,19 +457,38 @@ void AgentModel::decisionLaneChange() {
             right = &lane;
         } 
     }
+    
+    int lane_change;
 
     // if desired lane_change, right/left lane accessible, and route longer 
     if (ego && left && ego->lane_change && left->access == agent_model::ACC_ACCESSIBLE && left->route >= ego->route) {
-        _state.decisions.laneChange = 1;
+        lane_change = 1;
     }
     else if (ego && right && ego->lane_change && right->access == agent_model::ACC_ACCESSIBLE && right->route >= ego->route) {
-        _state.decisions.laneChange = -1;
+        lane_change = -1;
     }
     else {
-        _state.decisions.laneChange = 0;
+        lane_change = 0;
     }
+
+    // check if lane is occupied by a target
+    if (lane_change != 0) {
+        for (auto &target : _input.targets) {
+
+            // get target
+            auto tar = &target;
+
+            if (tar->lane == lane_change && abs(tar->ds) <= 10) {
+                lane_change = 0;
+                break; 
+            }
+        }
+    }
+
+    // set final lane_change
+    _state.decisions.laneChange = lane_change;
     
-    return; //TODO remove (neglect targets for now)
+    return; // do not consider MOBIL model on intersections
 
     // check positions
     double dsLF = INFINITY;
