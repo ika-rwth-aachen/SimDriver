@@ -439,6 +439,39 @@ void AgentModel::decisionProcessStop() {
 
 void AgentModel::decisionLaneChange() {
 
+    // check for route-based lane changes
+
+    // get current lanes
+    agent_model::Lane ego;
+    agent_model::Lane left;
+    agent_model::Lane right;
+
+    for (auto &lane : _input.lanes) {
+
+        if (lane.id == 0) { 
+            ego = lane;
+        }   
+        if (lane.id == 1) { 
+            left = lane;
+        }   
+        if (lane.id == -1) { 
+            right = lane;
+        } 
+    }
+
+    // if desired lane_change, right/left lane accessible, and route longer 
+    if (ego.lane_change && left.access && left.route >= ego.route) {
+        _state.decisions.laneChange = 1;
+    }
+    else if (ego.lane_change && right.access && right.route >= ego.route) {
+        _state.decisions.laneChange = -1;
+    }
+    else {
+        _state.decisions.laneChange = 0;
+    }
+    
+    return; //TODO remove (neglect targets for now)
+
     // check positions
     double dsLF = INFINITY;
     double vLF = 0.0;
