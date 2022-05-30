@@ -29,6 +29,7 @@
 
 #include <cmath>
 #include <deque>
+#include <algorithm>
 #include "model_collection.h"
 
 
