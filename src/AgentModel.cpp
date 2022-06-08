@@ -204,15 +204,15 @@ void AgentModel::decisionProcessStop() {
         }   
     }
 
-    // take closest signal (take traffic light even if 10 meters behind sign)
-    if (ds_rel_tls <= ds_rel_sgn + 10) {
-        rel = rel_tls;
-    } else {
-        rel = rel_sgn;
-    }
-
     if(found_signal) 
     {   
+        // take closest signal 
+        // (take traffic light even if 10 meters behind potential sign)
+        if (ds_rel_tls <= ds_rel_sgn + 10) {
+            rel = rel_tls;
+        } else {
+            rel = rel_sgn;
+        }
         // calculate net distance
         auto ds = rel->ds - _param.stop.dsGap + _param.vehicle.pos.x - _param.vehicle.size.length * 0.5;
 
