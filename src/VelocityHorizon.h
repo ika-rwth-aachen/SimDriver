@@ -71,7 +71,7 @@ namespace agent_model {
             _offset = std::floor(offset);
 
             // reset elements
-            _elements.clear();
+            if (_elements.size() > 0) _elements.clear();
 
             // create points
             for (size_t i = 0; i < noOfElements; ++i)

@@ -58,8 +58,10 @@ namespace agent_model {
             i = 0;
 
             // create vector
-            _elements.clear();
-            _elements.reserve(n);
+            if (_elements.size() != n) {
+                _elements.clear();
+                _elements.reserve(n);
+            }
 
         }
 
