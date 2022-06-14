@@ -125,9 +125,9 @@ namespace agent_model {
         double psi[NOH]; //!< heading relative to vehicle x-axis (in *rad*)
         double kappa[NOH]; //!< curvature of the road (in *1/m*)
         double egoLaneWidth[NOH]; //!< Width of the ego lane (in *m*)
-        double rightLaneWidth[NOH]; //!< Width of the right lane (in *m*)
-        double leftLaneWidth[NOH]; //!< Width of the left lane (in *m*)
-        double destinationPoint; //!< s coordinate of destination point (in *m*) -1 if not set
+        double rightLaneOffset[NOH]; //!< Offset to right centerline (in *m*)
+        double leftLaneOffset[NOH]; //!< Offset to left centerline (in *m*)
+        double destinationPoint; //!<  s coordinate of destination point (in *m*) -1 if not set
     };
 
     /*!< A class to store lane information. */

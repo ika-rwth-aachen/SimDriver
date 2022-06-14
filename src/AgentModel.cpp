@@ -829,14 +829,9 @@ void AgentModel::consciousReferencePoints() {
 
         }
 
-        // get lane widths
-        auto we = agent_model::interpolate(s, _input.horizon.ds, _input.horizon.egoLaneWidth, agent_model::NOH, 2);
-        auto wr = agent_model::interpolate(s, _input.horizon.ds, _input.horizon.rightLaneWidth, agent_model::NOH, 2);
-        auto wl = agent_model::interpolate(s, _input.horizon.ds, _input.horizon.leftLaneWidth, agent_model::NOH, 2);
-
         // get lane offsets
-        auto offR = -0.5 * (we + wr);
-        auto offL = 0.5 * (we + wl);
+        auto offR = agent_model::interpolate(s, _input.horizon.ds, _input.horizon.rightLaneOffset, agent_model::NOH, 2);
+        auto offL = agent_model::interpolate(s, _input.horizon.ds, _input.horizon.leftLaneOffset, agent_model::NOH, 2);
 
         // interpolate angle and do the rotation math
         auto psi = agent_model::interpolate(s, _input.horizon.ds, _input.horizon.psi, agent_model::NOH, 2);

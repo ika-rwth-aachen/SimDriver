@@ -76,7 +76,7 @@ namespace agent_model {
         registerArray(&tree->kappa[0], &data->kappa[0], owner, {NOH});
         registerArray(&tree->egoLaneWidth[0], &data->egoLaneWidth[0], owner, {NOH});
         registerArray(&tree->rightLaneWidth[0], &data->rightLaneWidth[0], owner, {NOH});
-        registerArray(&tree->leftLaneWidth[0], &data->leftLaneWidth[0], owner, {NOH});
+        registerArray(&tree->leftLaneOffset[0], &data->leftLaneOffset[0], owner, {NOH});
     }
 
     void registerTree(__Lane *tree, Lane *data, const void *owner) {
