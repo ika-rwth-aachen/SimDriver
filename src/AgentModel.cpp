@@ -852,8 +852,8 @@ void AgentModel::consciousReferencePoints() {
 
         // write data
         _state.conscious.lateral.paths[0].refPoints[i] = re;  // ego
-        _state.conscious.lateral.paths[1].refPoints[i] = rr;  // left
-        _state.conscious.lateral.paths[2].refPoints[i] = rl;  // right
+        _state.conscious.lateral.paths[1].refPoints[i] = rr;  // right
+        _state.conscious.lateral.paths[2].refPoints[i] = rl;  // left
 
     }
 
