@@ -761,7 +761,6 @@ void AgentModel::consciousLaneChange() {
         // reset process
         _lane_change_process_interval.reset();
         _lane_change_process_interval.setScale(0.0);
-
     }
 
     // set factor, TODO: multi-lane change
@@ -826,7 +825,6 @@ void AgentModel::consciousReferencePoints() {
 
             // next loop step
             continue;
-
         }
 
         // get lane offsets
@@ -854,9 +852,7 @@ void AgentModel::consciousReferencePoints() {
         _state.conscious.lateral.paths[0].refPoints[i] = re;  // ego
         _state.conscious.lateral.paths[1].refPoints[i] = rr;  // right
         _state.conscious.lateral.paths[2].refPoints[i] = rl;  // left
-
     }
-
 }
 
 
@@ -865,6 +861,7 @@ double AgentModel::subconsciousLateralControl() {
     // initialize reaction
     double reaction = 0.0;
 
+    // reset last aux entry
     _state.aux[31] = 0.0;
 
     // iterate over reference points
@@ -894,13 +891,16 @@ double AgentModel::subconsciousLateralControl() {
             _state.aux[31] += _state.conscious.lateral.paths[j].factor * _state.aux[idx];
 
         }
+    }
 
+    // reset temporary theta and dTheta
+    if (_memory.laneChange.switchLane != 0) {
+        for (int i = 0; i < agent_model::NOCP * agent_model::NORP * 2; i++) 
+            _state.aux[i] = 0;
     }
 
     return reaction;
-
 }
-
 
 double AgentModel::subconsciousFollow() {
 
