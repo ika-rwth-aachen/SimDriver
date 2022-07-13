@@ -828,7 +828,7 @@ void AgentModel::consciousReferencePoints() {
         }
 
         // get lane offsets
-        auto offR = agent_model::interpolate(s, _input.horizon.ds, _input.horizon.rightLaneOffset, agent_model::NOH, 2);
+        auto offR = -agent_model::interpolate(s, _input.horizon.ds, _input.horizon.rightLaneOffset, agent_model::NOH, 2);
         auto offL = agent_model::interpolate(s, _input.horizon.ds, _input.horizon.leftLaneOffset, agent_model::NOH, 2);
 
         // interpolate angle and do the rotation math
