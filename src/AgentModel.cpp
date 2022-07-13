@@ -440,6 +440,11 @@ void AgentModel::decisionLaneChange() {
 
     // check for route-based lane changes
 
+    // determine required length
+    double required_length = _param.laneChange.time * _input.vehicle.v * 1.5;
+    // TODO: assumption that v stays constant
+    // WIP: safety factor of 1.5
+
     // get current lanes
     agent_model::Lane* ego = nullptr;
     agent_model::Lane* left = nullptr;
@@ -458,29 +463,39 @@ void AgentModel::decisionLaneChange() {
         } 
     }
     
-    int lane_change;
+    int lane_change = 0;
 
     // if desired lane_change, right/left lane accessible, and route longer 
-    if (ego && left && ego->lane_change && left->access == agent_model::ACC_ACCESSIBLE && left->route >= ego->route) {
+    if (ego && left && ego->lane_change > 0 && left->access == agent_model::ACC_ACCESSIBLE && left->route >= ego->route) {
         lane_change = 1;
     }
-    else if (ego && right && ego->lane_change && right->access == agent_model::ACC_ACCESSIBLE && right->route >= ego->route) {
+    else if (ego && right && ego->lane_change > 0 && right->access == agent_model::ACC_ACCESSIBLE && right->route >= ego->route) {
         lane_change = -1;
     }
-    else {
-        lane_change = 0;
-    }
 
-    // check if lane is occupied by a target
+    // if lane_change desired
     if (lane_change != 0) {
-        for (auto &target : _input.targets) {
+        // allow later lane change if still enough route available
+        if (ego->lane_change == 2 && ego->route > required_length) {
+            ego->lane_change = 1;
+        }
 
-            // get target
-            auto tar = &target;
+        // skip lane change if route to short and later possible (status 1)
+        if (ego->lane_change == 1 && ego->route < required_length) {
+            lane_change = 0;
+        }
 
-            if (tar->lane == lane_change && abs(tar->ds) <= 10) {
-                lane_change = 0;
-                break; 
+        // skip lane change if lane occupied and later possible (status 1)
+        if (ego->lane_change == 1) {
+            for (auto &target : _input.targets) {
+
+                // get target
+                auto tar = &target;
+
+                if (tar->lane == lane_change && abs(tar->ds) <= 10) {
+                    lane_change = 0;
+                    break; 
+                }
             }
         }
     }
@@ -488,7 +503,7 @@ void AgentModel::decisionLaneChange() {
     // set final lane_change
     _state.decisions.laneChange = lane_change;
     
-    return; // do not consider MOBIL model on intersections
+    return; // TODO: do not consider MOBIL model on intersections
 
     // check positions
     double dsLF = INFINITY;
@@ -529,7 +544,6 @@ void AgentModel::decisionLaneChange() {
             dsRB = tar->ds;
             vRB = tar->v;
         }
-
     }
 
     // get values
