@@ -124,21 +124,25 @@ namespace agent_model {
         double y[NOH]; //!< y ordinate relative to ego unit (in *m*)
         double psi[NOH]; //!< heading relative to vehicle x-axis (in *rad*)
         double kappa[NOH]; //!< curvature of the road (in *1/m*)
-        double egoLaneWidth[NOH]; //!< Width of the ego lane (in *m*)
-        double rightLaneOffset[NOH]; //!< Offset to right centerline (in *m*)
-        double leftLaneOffset[NOH]; //!< Offset to left centerline (in *m*)
+        double egoLaneWidth[NOH]; //!< Width of ego lane (in *m*) -1 if not set
+        double rightLaneOffset[NOH]; //!< Offset to right centerlane (in *m*) 0 if not set
+        double leftLaneOffset[NOH]; //!< Offset to left centerlane (in *m*) 0 if not set
         double destinationPoint; //!<  s coordinate of destination point (in *m*) -1 if not set
     };
 
     /*!< A class to store lane information. */
     struct Lane {
         int id; //!< Unique ID of the signal. The id is not just an identifier but also specifies the position of the lane relative to the ego lane in OpenDRIVE manner! e.g. -1 = the next lane to the left, 1 = the next lane to the right.
-        double width; //!< Width of the lane (in *m*)
-        double route; //!< Distance on the lane until the lane splits from the current route. (in *m*)
-        double closed; //!< Distance on the lane until the lane is closed. (in *m*)
+        double width; //!< Width of the lane (in *m*) -1 if not set
+        double route; //!< Distance on the lane until the lane splits from the current route. (in *m*) -1 if not set
+        double closed; //!< Distance on the lane until the lane is closed. (in *m*) -1 if not set
         DrivingDirection dir; //!< The driving direction of the lane related to the ego direction.
-        Accessibility access; //!< The accessibility of the lane from the ego lane.
-        bool lane_change; //!< Flag if lane change is required to reach destination.
+        Accessibility access; //!< The accessibility of the lane from the ego lane. - true if type driving
+        int lane_change; //!< Flag if lane change is
+                        // not defined (0) - already on target lane
+                        // not necessary (0) - already on target lane
+                        // intended (1) - necessary, but also later possibility
+                        // required (2) - last chance
     };
 
     /*!< A class to store control path information */
