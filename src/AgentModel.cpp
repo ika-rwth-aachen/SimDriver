@@ -494,7 +494,7 @@ void AgentModel::decisionLaneChange() {
         }
 
         // skip lane change if lane occupied and later possible (status 1)
-        if (lane_change_status == 1) {
+        if (lane_change_status == 1 && perform_change != 0) {
 
             // consider only targets within critical thw
             double thw_crit = 1;
@@ -512,13 +512,19 @@ void AgentModel::decisionLaneChange() {
                 double dv = _input.vehicle.v - tar->v;
                 double s_crit = thw_crit * dv;
 
+                // skip if too close
+                if (abs(tar->ds) < safety_boundary) {
+                    perform_change = 0;
+                    break; 
+                }
+
                 // if ego vehicle is faster - target in front is critical
-                if (dv > 0 && tar->ds < s_crit && tar->ds > -safety_boundary) {
+                if (dv > 0 && tar->ds > safety_boundary && tar->ds < s_crit) {
                     perform_change = 0;
                     break; 
                 }
                 // if ego vehicle is slower - target in back is critical
-                if (dv < 0 && tar->ds < s_crit && tar->ds < safety_boundary) {
+                if (dv < 0 && tar->ds < -safety_boundary && tar->ds > s_crit) {
                     perform_change = 0;
                     break; 
                 }
