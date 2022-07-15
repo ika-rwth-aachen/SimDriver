@@ -139,7 +139,7 @@ namespace agent_model {
         DrivingDirection dir; //!< The driving direction of the lane related to the ego direction.
         Accessibility access; //!< The accessibility of the lane from the ego lane. - true if type driving
         int lane_change; //!< Flag if lane change is
-                        // not defined (0) - already on target lane
+                        // not defined (-1)
                         // not necessary (0) - already on target lane
                         // intended (1) - necessary, but also later possibility
                         // required (2) - last chance

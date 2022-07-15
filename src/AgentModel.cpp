@@ -439,17 +439,16 @@ void AgentModel::decisionProcessStop() {
 void AgentModel::decisionLaneChange() {
 
     // check for route-based lane changes
+    _state.decisions.laneChange = 0;
 
-    // determine required length
-    double required_length = _param.laneChange.time * _input.vehicle.v * 1.5;
-    // TODO: assumption that v stays constant
-    // WIP: safety factor of 1.5
+    // determine velocity dependend required length (assumption: v is constant)
+    double safety_factor = 1.5;
+    double length = _param.laneChange.time * _input.vehicle.v * safety_factor;
 
-    // get current lanes
+    // get current lane pointers
     agent_model::Lane* ego = nullptr;
     agent_model::Lane* left = nullptr;
     agent_model::Lane* right = nullptr;
-
     for (auto &lane : _input.lanes) {
 
         if (lane.id == 0) { 
@@ -462,38 +461,65 @@ void AgentModel::decisionLaneChange() {
             right = &lane;
         } 
     }
-    
-    int lane_change = 0;
+    // skip if ego lane not found
+    if (!ego) return;
 
-    // if desired lane_change, right/left lane accessible, and route longer 
-    if (ego && left && ego->lane_change > 0 && left->access == agent_model::ACC_ACCESSIBLE && left->route >= ego->route) {
-        lane_change = 1;
+    // initiliaze variables
+    int perform_change = 0;
+    int lane_change_status = ego->lane_change;
+    
+    // skip if lane_change not desired
+    if (lane_change_status < 1) return;
+
+    // if left lane accessible and route longer 
+    if (left &&  left->access == agent_model::ACC_ACCESSIBLE && left->route >= ego->route) {
+        perform_change = 1;
     }
-    else if (ego && right && ego->lane_change > 0 && right->access == agent_model::ACC_ACCESSIBLE && right->route >= ego->route) {
-        lane_change = -1;
+    // if right lane accessible and route longer 
+    else if (right && right->access == agent_model::ACC_ACCESSIBLE && right->route >= ego->route) {
+        perform_change = -1;
     }
 
     // if lane_change desired
-    if (lane_change != 0) {
+    if (perform_change != 0) {
+        
         // allow later lane change if still enough route available
-        if (ego->lane_change == 2 && ego->route > required_length) {
-            ego->lane_change = 1;
+        if (lane_change_status == 2 && ego->route > length) {
+            lane_change_status = 1;
         }
 
         // skip lane change if route to short and later possible (status 1)
-        if (ego->lane_change == 1 && ego->route < required_length) {
-            lane_change = 0;
+        if (lane_change_status == 1 && ego->route < length) {
+            perform_change = 0;
         }
 
         // skip lane change if lane occupied and later possible (status 1)
-        if (ego->lane_change == 1) {
+        if (lane_change_status == 1) {
+
+            // consider only targets within critical thw
+            double thw_crit = 1;
+            double safety_boundary = 5;
+
             for (auto &target : _input.targets) {
 
                 // get target
                 auto tar = &target;
 
-                if (tar->lane == lane_change && abs(tar->ds) <= 10) {
-                    lane_change = 0;
+                // skip target if not on lane
+                if (tar->lane != perform_change) continue;
+
+                // caculate dv and s_crit
+                double dv = _input.vehicle.v - tar->v;
+                double s_crit = thw_crit * dv;
+
+                // if ego vehicle is faster - target in front is critical
+                if (dv > 0 && tar->ds < s_crit && tar->ds > -safety_boundary) {
+                    perform_change = 0;
+                    break; 
+                }
+                // if ego vehicle is slower - target in back is critical
+                if (dv < 0 && tar->ds < s_crit && tar->ds < safety_boundary) {
+                    perform_change = 0;
                     break; 
                 }
             }
@@ -501,9 +527,10 @@ void AgentModel::decisionLaneChange() {
     }
 
     // set final lane_change
-    _state.decisions.laneChange = lane_change;
+    _state.decisions.laneChange = perform_change;
     
-    return; // TODO: do not consider MOBIL model on intersections
+    return; 
+    // TODO: do not consider MOBIL model right now
 
     // check positions
     double dsLF = INFINITY;
