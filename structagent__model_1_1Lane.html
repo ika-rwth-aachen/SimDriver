@@ -81,15 +81,15 @@ int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struc
 <tr class="separator:a20b1ff511e8b20f5975c9dd8089b2eba"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab6931df9bd019becb986b1c9518afa5f"><td class="memItemLeft" align="right" valign="top"><a id="ab6931df9bd019becb986b1c9518afa5f"></a>
 double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structagent__model_1_1Lane.html#ab6931df9bd019becb986b1c9518afa5f">width</a></td></tr>
-<tr class="memdesc:ab6931df9bd019becb986b1c9518afa5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Width of the lane (in <em>m</em>) <br /></td></tr>
+<tr class="memdesc:ab6931df9bd019becb986b1c9518afa5f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Width of the lane (in <em>m</em>) -1 if not set. <br /></td></tr>
 <tr class="separator:ab6931df9bd019becb986b1c9518afa5f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab0a7b744490a571c8aebbebfa391bf85"><td class="memItemLeft" align="right" valign="top"><a id="ab0a7b744490a571c8aebbebfa391bf85"></a>
 double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structagent__model_1_1Lane.html#ab0a7b744490a571c8aebbebfa391bf85">route</a></td></tr>
-<tr class="memdesc:ab0a7b744490a571c8aebbebfa391bf85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance on the lane until the lane splits from the current route. (in <em>m</em>) <br /></td></tr>
+<tr class="memdesc:ab0a7b744490a571c8aebbebfa391bf85"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance on the lane until the lane splits from the current route. (in <em>m</em>) -1 if not set. <br /></td></tr>
 <tr class="separator:ab0a7b744490a571c8aebbebfa391bf85"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a95023f673387781643ef18c6329b6692"><td class="memItemLeft" align="right" valign="top"><a id="a95023f673387781643ef18c6329b6692"></a>
 double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structagent__model_1_1Lane.html#a95023f673387781643ef18c6329b6692">closed</a></td></tr>
-<tr class="memdesc:a95023f673387781643ef18c6329b6692"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance on the lane until the lane is closed. (in <em>m</em>) <br /></td></tr>
+<tr class="memdesc:a95023f673387781643ef18c6329b6692"><td class="mdescLeft">&#160;</td><td class="mdescRight">Distance on the lane until the lane is closed. (in <em>m</em>) -1 if not set. <br /></td></tr>
 <tr class="separator:a95023f673387781643ef18c6329b6692"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afefbf42b270147e4b711975b074eddd0"><td class="memItemLeft" align="right" valign="top"><a id="afefbf42b270147e4b711975b074eddd0"></a>
 DrivingDirection&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structagent__model_1_1Lane.html#afefbf42b270147e4b711975b074eddd0">dir</a></td></tr>
@@ -97,8 +97,12 @@ DrivingDirection&#160;</td><td class="memItemRight" valign="bottom"><a class="el
 <tr class="separator:afefbf42b270147e4b711975b074eddd0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a040013d44d43168b44c23e9515ba15a8"><td class="memItemLeft" align="right" valign="top"><a id="a040013d44d43168b44c23e9515ba15a8"></a>
 Accessibility&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structagent__model_1_1Lane.html#a040013d44d43168b44c23e9515ba15a8">access</a></td></tr>
-<tr class="memdesc:a040013d44d43168b44c23e9515ba15a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">The accessibility of the lane from the ego lane. <br /></td></tr>
+<tr class="memdesc:a040013d44d43168b44c23e9515ba15a8"><td class="mdescLeft">&#160;</td><td class="mdescRight">The accessibility of the lane from the ego lane. - true if type driving. <br /></td></tr>
 <tr class="separator:a040013d44d43168b44c23e9515ba15a8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aca886c98f21c60066ea11c1a262ed30c"><td class="memItemLeft" align="right" valign="top"><a id="aca886c98f21c60066ea11c1a262ed30c"></a>
+int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structagent__model_1_1Lane.html#aca886c98f21c60066ea11c1a262ed30c">lane_change</a></td></tr>
+<tr class="memdesc:aca886c98f21c60066ea11c1a262ed30c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Flag if lane change is. <br /></td></tr>
+<tr class="separator:aca886c98f21c60066ea11c1a262ed30c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>A class to store control path information </p>
