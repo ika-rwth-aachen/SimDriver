@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=9"/>
 <meta name="generator" content="Doxygen 1.8.13"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>SimDriver: agent_model::ControlPath Struct Reference</title>
+<title>SimDriver: agent_model::FollowTarget Struct Reference</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -59,45 +59,41 @@ $(function() {
 
 <div id="nav-path" class="navpath">
   <ul>
-<li class="navelem"><b>agent_model</b></li><li class="navelem"><a class="el" href="structagent__model_1_1ControlPath.html">ControlPath</a></li>  </ul>
+<li class="navelem"><b>agent_model</b></li><li class="navelem"><a class="el" href="structagent__model_1_1FollowTarget.html">FollowTarget</a></li>  </ul>
 </div>
 </div><!-- top -->
 <div class="header">
   <div class="summary">
 <a href="#pub-attribs">Public Attributes</a> &#124;
-<a href="structagent__model_1_1ControlPath-members.html">List of all members</a>  </div>
+<a href="structagent__model_1_1FollowTarget-members.html">List of all members</a>  </div>
   <div class="headertitle">
-<div class="title">agent_model::ControlPath Struct Reference</div>  </div>
+<div class="title">agent_model::FollowTarget Struct Reference</div>  </div>
 </div><!--header-->
 <div class="contents">
 
 <p><code>#include &lt;<a class="el" href="Interface_8h_source.html">Interface.h</a>&gt;</code></p>
-<div class="dynheader">
-Collaboration diagram for agent_model::ControlPath:</div>
-<div class="dyncontent">
-<div class="center"><img src="structagent__model_1_1ControlPath__coll__graph.png" border="0" usemap="#agent__model_1_1ControlPath_coll__map" alt="Collaboration graph"/></div>
-<map name="agent__model_1_1ControlPath_coll__map" id="agent__model_1_1ControlPath_coll__map">
-<area shape="rect" id="node2" href="structagent__model_1_1DynamicPosition.html" title="agent_model::DynamicPosition" alt="" coords="5,5,231,32"/>
-</map>
-<center><span class="legend">[<a href="graph_legend.html">legend</a>]</span></center></div>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
-<tr class="memitem:acb8f0536bde7b37fb9404015a33e8bf8"><td class="memItemLeft" align="right" valign="top"><a id="acb8f0536bde7b37fb9404015a33e8bf8"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structagent__model_1_1ControlPath.html#acb8f0536bde7b37fb9404015a33e8bf8">offset</a></td></tr>
-<tr class="memdesc:acb8f0536bde7b37fb9404015a33e8bf8"><td class="mdescLeft">&#160;</td><td class="mdescRight">The lateral offset from the reference line to be controlled to. (in <em>m</em>) <br /></td></tr>
-<tr class="separator:acb8f0536bde7b37fb9404015a33e8bf8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a9cb7bd86ea60ec5fa70e9c56486b3785"><td class="memItemLeft" align="right" valign="top"><a id="a9cb7bd86ea60ec5fa70e9c56486b3785"></a>
-double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structagent__model_1_1ControlPath.html#a9cb7bd86ea60ec5fa70e9c56486b3785">factor</a></td></tr>
-<tr class="memdesc:a9cb7bd86ea60ec5fa70e9c56486b3785"><td class="mdescLeft">&#160;</td><td class="mdescRight">A factor to describe the influence of the point. <br /></td></tr>
-<tr class="separator:a9cb7bd86ea60ec5fa70e9c56486b3785"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a65e963653ac7d38dd5d4d7da20f78030"><td class="memItemLeft" align="right" valign="top"><a id="a65e963653ac7d38dd5d4d7da20f78030"></a>
-<a class="el" href="structagent__model_1_1DynamicPosition.html">DynamicPosition</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structagent__model_1_1ControlPath.html#a65e963653ac7d38dd5d4d7da20f78030">refPoints</a> [NORP]</td></tr>
-<tr class="memdesc:a65e963653ac7d38dd5d4d7da20f78030"><td class="mdescLeft">&#160;</td><td class="mdescRight">The reference points for the lateral control. <br /></td></tr>
-<tr class="separator:a65e963653ac7d38dd5d4d7da20f78030"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a41b5a7175edb7bba4225254d2c9a82d2"><td class="memItemLeft" align="right" valign="top"><a id="a41b5a7175edb7bba4225254d2c9a82d2"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structagent__model_1_1FollowTarget.html#a41b5a7175edb7bba4225254d2c9a82d2">factor</a></td></tr>
+<tr class="memdesc:a41b5a7175edb7bba4225254d2c9a82d2"><td class="mdescLeft">&#160;</td><td class="mdescRight">The influence of the target. <br /></td></tr>
+<tr class="separator:a41b5a7175edb7bba4225254d2c9a82d2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a332e36d0b6a394f6c1d1ba5dcdfda841"><td class="memItemLeft" align="right" valign="top"><a id="a332e36d0b6a394f6c1d1ba5dcdfda841"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structagent__model_1_1FollowTarget.html#a332e36d0b6a394f6c1d1ba5dcdfda841">lane</a></td></tr>
+<tr class="memdesc:a332e36d0b6a394f6c1d1ba5dcdfda841"><td class="mdescLeft">&#160;</td><td class="mdescRight"><a class="el" href="structagent__model_1_1Lane.html">Lane</a> ID of the actual lane of the target relative to driver's lane. <br /></td></tr>
+<tr class="separator:a332e36d0b6a394f6c1d1ba5dcdfda841"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae5689386fef5b71ac41f39ee0e65c839"><td class="memItemLeft" align="right" valign="top"><a id="ae5689386fef5b71ac41f39ee0e65c839"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structagent__model_1_1FollowTarget.html#ae5689386fef5b71ac41f39ee0e65c839">distance</a></td></tr>
+<tr class="memdesc:ae5689386fef5b71ac41f39ee0e65c839"><td class="mdescLeft">&#160;</td><td class="mdescRight">The distance to the target to be followed. (in <em>m</em>) <br /></td></tr>
+<tr class="separator:ae5689386fef5b71ac41f39ee0e65c839"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afdd911f6292a2df1ea778808d8f76e0c"><td class="memItemLeft" align="right" valign="top"><a id="afdd911f6292a2df1ea778808d8f76e0c"></a>
+double&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structagent__model_1_1FollowTarget.html#afdd911f6292a2df1ea778808d8f76e0c">velocity</a></td></tr>
+<tr class="memdesc:afdd911f6292a2df1ea778808d8f76e0c"><td class="mdescLeft">&#160;</td><td class="mdescRight">The absolute velocity of the target to be followed. (in <em>m/s</em>) <br /></td></tr>
+<tr class="separator:afdd911f6292a2df1ea778808d8f76e0c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
-<div class="textblock"><p>A class to store the internal state for the conscious&amp;#x2F;follow component. </p>
+<div class="textblock"><p>A class to store signal information. </p>
 </div><hr/>The documentation for this struct was generated from the following file:<ul>
 <li>src/<a class="el" href="Interface_8h_source.html">Interface.h</a></li>
 </ul>

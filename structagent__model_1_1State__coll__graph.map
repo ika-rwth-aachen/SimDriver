@@ -1,13 +1,14 @@
 <map id="agent_model::State" name="agent_model::State">
-<area shape="rect" id="node2" href="$structagent__model_1_1Decisions.html" title="agent_model::Decisions" alt="" coords="992,80,1171,107"/>
-<area shape="rect" id="node3" href="$structagent__model_1_1Point.html" title="agent_model::Point" alt="" coords="664,5,812,32"/>
-<area shape="rect" id="node4" href="$structagent__model_1_1DecisionStopping.html" title="agent_model::DecisionStopping" alt="" coords="624,80,852,107"/>
-<area shape="rect" id="node5" href="$structagent__model_1_1Conscious.html" title="agent_model::Conscious" alt="" coords="991,181,1172,208"/>
-<area shape="rect" id="node6" href="$structagent__model_1_1ConsciousStop.html" title="agent_model::ConsciousStop" alt="" coords="633,131,843,157"/>
-<area shape="rect" id="node7" href="$structagent__model_1_1ConsciousVelocity.html" title="agent_model::ConsciousVelocity" alt="" coords="621,181,855,208"/>
-<area shape="rect" id="node8" href="$structagent__model_1_1ConsciousFollow.html" title="agent_model::ConsciousFollow" alt="" coords="627,232,849,259"/>
-<area shape="rect" id="node9" href="$structagent__model_1_1ConsciousLateral.html" title="agent_model::ConsciousLateral" alt="" coords="625,283,851,309"/>
-<area shape="rect" id="node10" href="$structagent__model_1_1ControlPath.html" title="agent_model::ControlPath" alt="" coords="341,283,532,309"/>
-<area shape="rect" id="node11" href="$structagent__model_1_1DynamicPosition.html" title="agent_model::DynamicPosition" alt="" coords="5,283,231,309"/>
-<area shape="rect" id="node12" href="$structagent__model_1_1Subconscious.html" title="agent_model::Subconscious" alt="" coords="980,232,1183,259"/>
+<area shape="rect" id="node2" href="$structagent__model_1_1Decisions.html" title="agent_model::Decisions" alt="" coords="1008,95,1187,121"/>
+<area shape="rect" id="node3" href="$structagent__model_1_1Point.html" title="agent_model::Point" alt="" coords="680,5,828,32"/>
+<area shape="rect" id="node4" href="$structagent__model_1_1DecisionStopping.html" title="agent_model::DecisionStopping" alt="" coords="640,95,868,121"/>
+<area shape="rect" id="node5" href="$structagent__model_1_1Conscious.html" title="agent_model::Conscious" alt="" coords="1007,196,1188,223"/>
+<area shape="rect" id="node6" href="$structagent__model_1_1ConsciousStop.html" title="agent_model::ConsciousStop" alt="" coords="649,145,859,172"/>
+<area shape="rect" id="node7" href="$structagent__model_1_1ConsciousVelocity.html" title="agent_model::ConsciousVelocity" alt="" coords="637,196,871,223"/>
+<area shape="rect" id="node8" href="$structagent__model_1_1ConsciousFollow.html" title="agent_model::ConsciousFollow" alt="" coords="643,247,865,273"/>
+<area shape="rect" id="node9" href="$structagent__model_1_1FollowTarget.html" title="agent_model::FollowTarget" alt="" coords="341,247,539,273"/>
+<area shape="rect" id="node10" href="$structagent__model_1_1ConsciousLateral.html" title="agent_model::ConsciousLateral" alt="" coords="641,297,867,324"/>
+<area shape="rect" id="node11" href="$structagent__model_1_1ControlPath.html" title="agent_model::ControlPath" alt="" coords="345,297,535,324"/>
+<area shape="rect" id="node12" href="$structagent__model_1_1DynamicPosition.html" title="agent_model::DynamicPosition" alt="" coords="5,297,231,324"/>
+<area shape="rect" id="node13" href="$structagent__model_1_1Subconscious.html" title="agent_model::Subconscious" alt="" coords="996,247,1199,273"/>
 </map>

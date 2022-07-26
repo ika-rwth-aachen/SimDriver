@@ -1,8 +1,9 @@
 <map id="agent_model::Conscious" name="agent_model::Conscious">
-<area shape="rect" id="node2" href="$structagent__model_1_1ConsciousStop.html" title="agent_model::ConsciousStop" alt="" coords="633,5,843,32"/>
-<area shape="rect" id="node3" href="$structagent__model_1_1ConsciousVelocity.html" title="agent_model::ConsciousVelocity" alt="" coords="621,56,855,83"/>
-<area shape="rect" id="node4" href="$structagent__model_1_1ConsciousFollow.html" title="agent_model::ConsciousFollow" alt="" coords="627,107,849,133"/>
-<area shape="rect" id="node5" href="$structagent__model_1_1ConsciousLateral.html" title="agent_model::ConsciousLateral" alt="" coords="625,157,851,184"/>
-<area shape="rect" id="node6" href="$structagent__model_1_1ControlPath.html" title="agent_model::ControlPath" alt="" coords="341,157,532,184"/>
-<area shape="rect" id="node7" href="$structagent__model_1_1DynamicPosition.html" title="agent_model::DynamicPosition" alt="" coords="5,157,231,184"/>
+<area shape="rect" id="node2" href="$structagent__model_1_1ConsciousStop.html" title="agent_model::ConsciousStop" alt="" coords="649,5,859,32"/>
+<area shape="rect" id="node3" href="$structagent__model_1_1ConsciousVelocity.html" title="agent_model::ConsciousVelocity" alt="" coords="637,56,871,83"/>
+<area shape="rect" id="node4" href="$structagent__model_1_1ConsciousFollow.html" title="agent_model::ConsciousFollow" alt="" coords="643,107,865,133"/>
+<area shape="rect" id="node5" href="$structagent__model_1_1FollowTarget.html" title="agent_model::FollowTarget" alt="" coords="341,107,539,133"/>
+<area shape="rect" id="node6" href="$structagent__model_1_1ConsciousLateral.html" title="agent_model::ConsciousLateral" alt="" coords="641,157,867,184"/>
+<area shape="rect" id="node7" href="$structagent__model_1_1ControlPath.html" title="agent_model::ControlPath" alt="" coords="345,157,535,184"/>
+<area shape="rect" id="node8" href="$structagent__model_1_1DynamicPosition.html" title="agent_model::DynamicPosition" alt="" coords="5,157,231,184"/>
 </map>
