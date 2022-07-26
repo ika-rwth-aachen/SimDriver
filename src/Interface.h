@@ -152,6 +152,14 @@ namespace agent_model {
         DynamicPosition refPoints[NORP]; //!< The reference points for the lateral control.
     };
 
+      /*!< A class to store the internal state for the conscious&#x2F;follow component. */
+    struct FollowTarget {
+        double factor; //!< The influence of the target
+        double lane; //!< Lane ID of the actual lane of the target relative to driver's lane.
+        double distance; //!< The distance to the target to be followed. (in *m*)
+        double velocity; //!< The absolute velocity of the target to be followed. (in *m/s*)
+    };
+
     /*!< A class to store signal information. */
     struct Signal {
         unsigned int id; //!< Unique ID of the signal
@@ -195,6 +203,7 @@ namespace agent_model {
         DecisionStopping signal; //!< The decision information caused by a signal.
         DecisionStopping target; //!< The decision information caused by a target.
         DecisionStopping destination; //!< The decision information caused by a destination.
+        DecisionStopping lane; //!< The decision information caused by a lane change.
     };
 
     /*!< A class to store the internal state for the conscious&#x2F;velocity component. */
@@ -214,8 +223,7 @@ namespace agent_model {
 
     /*!< A class to store the internal state for the conscious&#x2F;follow component. */
     struct ConsciousFollow {
-        double distance; //!< The distance to the target to be followed. (in *m*)
-        double velocity; //!< The absolute velocity of the target to be followed. (in *m/s*)
+        FollowTarget targets[2];
         bool standing; //!< A flag to define whether the driver wants to keep the vehicle in standstill.
     };
 

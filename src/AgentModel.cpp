@@ -161,12 +161,30 @@ void AgentModel::decisionProcessStop() {
     _state.decisions.destination.position = INFINITY;
     _state.decisions.destination.standingTime = INFINITY;
 
+    _state.decisions.lane.id = std::numeric_limits<unsigned int>::max();
+    _state.decisions.lane.position = INFINITY;
+    _state.decisions.lane.standingTime = INFINITY;
+
     // add stop point because of destination point
     if (_input.horizon.destinationPoint > 0)
     {
         _state.decisions.destination.id = 3;
         _state.decisions.destination.position = _input.vehicle.s + _input.horizon.destinationPoint;
         _state.decisions.destination.standingTime = INFINITY;
+    }
+
+    // add stop point because of end of route
+    agent_model::Lane* ego = nullptr;
+    for (auto &lane : _input.lanes) {
+        if (lane.id == 0) { 
+            ego = &lane;
+        }   
+    }
+    // only set if on last segment
+    if (ego->lane_change == 2)  {
+        _state.decisions.lane.id = 4;
+        _state.decisions.lane.position = _input.vehicle.s + ego->route;
+        _state.decisions.lane.standingTime = INFINITY;
     }
 
     // not yet decided about to stop or drive
@@ -442,7 +460,7 @@ void AgentModel::decisionLaneChange() {
     _state.decisions.laneChange = 0;
 
     // determine velocity dependend required length (assumption: v is constant)
-    double safety_factor = 1.5;
+    double safety_factor = 1.0;
     double length = _param.laneChange.time * _input.vehicle.v * safety_factor;
 
     // get current lane pointers
@@ -488,8 +506,8 @@ void AgentModel::decisionLaneChange() {
             lane_change_status = 1;
         }
 
-        // skip lane change if route to short and later possible (status 1)
-        if (lane_change_status == 1 && ego->route < length) {
+        // skip lane change if route to short
+        if (ego->route < length) {
             perform_change = 0;
         }
 
@@ -532,9 +550,9 @@ void AgentModel::decisionLaneChange() {
         }
     }
 
-    // set final lane_change
+    // set final lane_change decision
     _state.decisions.laneChange = perform_change;
-    
+
     return; 
     // TODO: do not consider MOBIL model right now
 
@@ -712,6 +730,7 @@ void AgentModel::consciousStop() {
     agent_model::DecisionStopping signal = _state.decisions.signal;
     agent_model::DecisionStopping target = _state.decisions.target;
     agent_model::DecisionStopping destination = _state.decisions.destination;
+    agent_model::DecisionStopping lane = _state.decisions.lane;
 
     // check position and add stop point
     if(!std::isinf(signal.position))
@@ -722,6 +741,9 @@ void AgentModel::consciousStop() {
 
     if(!std::isinf(destination.position))
         _stop_horizon.addStopPoint(destination.id, destination.position, destination.standingTime);
+
+    if(!std::isinf(lane.position))
+        _stop_horizon.addStopPoint(lane.id, lane.position, lane.standingTime);
 
     // get stop
     auto stop = _stop_horizon.getNextStop();
@@ -754,33 +776,61 @@ void AgentModel::consciousFollow() {
 
     // calculate net distance for following
     unsigned long im = agent_model::NOT;
+    unsigned long im_n_l = agent_model::NOT;
+
+    int insert_idx;
     for (unsigned long i = 0; i < agent_model::NOT; ++i) {
 
         // ignore non-relevant targets (, ds < 0, other lane)
-        if (t[i].id == 0 || std::isinf(t[i].ds) || t[i].ds < 0.0 || t[i].lane != 0)
-            continue;
+        if (t[i].id == 0 || std::isinf(t[i].ds) || t[i].ds < 0.0) continue;
+        
+        
+        if (t[i].lane == 0) {
 
-        // check if distance is smaller
-        if (im == agent_model::NOT || t[im].ds > t[i].ds)
-            im = i;
+            // check if distance is smaller
+            if (im == agent_model::NOT || t[im].ds > t[i].ds)
+                im = i;
+        }
 
+        if (_lane_change_process_interval.getFactor() > 0 && t[i].lane == _state.decisions.laneChange) 
+        {
+            // check if distance is smaller
+            if (im_n_l == agent_model::NOT || t[im_n_l].ds > t[i].ds)
+                im_n_l = i;
+        }
     }
-
+    
     // instantiate distance and  velocity
-    double ds = INFINITY, v = 0.0;
+    double ds = INFINITY, v = 0.0, factor = 1;
+
+    // closest ego lane target
+    factor = 1 - _lane_change_process_interval.getFactor();
     if (im != agent_model::NOT) {
         ds = t[im].ds - t[im].size.length * 0.5 - _param.vehicle.size.length * 0.5 + _param.vehicle.pos.x;
         v = t[im].v;
     }
-
+    
+    // save distance and velocity
+    _state.conscious.follow.targets[0].distance = ds;
+    _state.conscious.follow.targets[0].velocity = v;
+    _state.conscious.follow.targets[0].factor = factor;
+    
     // calculate if vehicle stands behind target vehicle
     bool standing = _input.vehicle.v < 1e-3 && v < 0.5 && ds <= _param.follow.dsStopped + 1e-2;
+    _state.conscious.follow.standing = standing;
+    
+    // closest neigbouring lane target
+    factor = _lane_change_process_interval.getFactor();
+    if (im_n_l != agent_model::NOT) {
+        ds = t[im_n_l].ds - t[im_n_l].size.length * 0.5 - _param.vehicle.size.length * 0.5 + _param.vehicle.pos.x;
+        v = t[im_n_l].v;
+        factor = _lane_change_process_interval.getFactor();
+    }
 
     // save distance and velocity
-    _state.conscious.follow.distance = ds;
-    _state.conscious.follow.velocity = v;
-    _state.conscious.follow.standing = standing;
-
+    _state.conscious.follow.targets[1].distance = ds;
+    _state.conscious.follow.targets[1].velocity = v;
+    _state.conscious.follow.targets[1].factor = factor;
 }
 
 
@@ -808,6 +858,11 @@ void AgentModel::consciousLaneChange() {
         // reset process
         _lane_change_process_interval.reset();
         _lane_change_process_interval.setScale(0.0);
+
+        // reset stop point
+        _state.decisions.lane.id = 4;
+        _state.decisions.lane.position = INFINITY;
+        _state.decisions.lane.standingTime = 0;
     }
 
     // set factor, TODO: multi-lane change
@@ -953,33 +1008,37 @@ double AgentModel::subconsciousFollow() {
 
     using namespace std;
 
+    double res = 0;
     // get values
-    double vT = _state.conscious.follow.velocity;
-    double ds = _state.conscious.follow.distance;
-    double v0 = _state.conscious.velocity.local;
-    double s0 = _param.follow.dsStopped;
-    double T = _param.follow.timeHeadway;
-    double TMax = _param.follow.thwMax;
-    double v = _input.vehicle.v;
+    for (auto &t : _state.conscious.follow.targets) {
 
-    // ignore when distance is inf
-    if (std::isinf(ds))
-        return 0.0;
+        double vT = t.velocity;
+        double ds = t.distance;
+        double v0 = _state.conscious.velocity.local;
+        double s0 = _param.follow.dsStopped;
+        double T = _param.follow.timeHeadway;
+        double TMax = _param.follow.thwMax;
+        double v = _input.vehicle.v;
 
-    double v0T = std::max(10.0, v0);
-    double vTT = std::min(v0T, std::max(5.0, vT));
+        // ignore when distance is inf
+        if (std::isinf(ds))
+            continue;
 
-    // calculate compensating time headway
-    double TT = (s0 + T * vTT - (T * vTT * sqrt(vTT * vTT + v0T * v0T) * sqrt(vTT + v0T) * sqrt(v0T - vTT)) / (v0T * v0T)) / vTT;
-    TT = max(0.0, min(T, TT));
+        double v0T = std::max(10.0, v0);
+        double vTT = std::min(v0T, std::max(5.0, vT));
 
-    // scale down factor
-    double f = agent_model::scaleInf(ds, v0 * TMax, vT * T);
-    double fT = agent_model::scale(vT, 5.0, 0.0);
+        // calculate compensating time headway
+        double TT = (s0 + T * vTT - (T * vTT * sqrt(vTT * vTT + v0T * v0T) * sqrt(vTT + v0T) * sqrt(v0T - vTT)) / (v0T * v0T)) / vTT;
+        TT = max(0.0, min(T, TT));
 
-    // calculate reaction
-    return agent_model::IDMFollowReaction(ds * f, vT, v, T - fT * TT, s0, _param.velocity.a, _param.velocity.b);
+        // scale down factor
+        double f = agent_model::scaleInf(ds, v0 * TMax, vT * T);
+        double fT = agent_model::scale(vT, 5.0, 0.0);
 
+        // calculate reaction and multiply with target factor
+        res += t.factor * agent_model::IDMFollowReaction(ds * f, vT, v, T - fT * TT, s0, _param.velocity.a, _param.velocity.b);
+    }
+    return res;
 }
 
 
