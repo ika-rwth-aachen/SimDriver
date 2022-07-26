@@ -151,7 +151,6 @@ namespace agent_model {
         tree->registerValue(data, owner);
         tree->distance.registerValue(&data->targets[0].distance, owner);
         tree->velocity.registerValue(&data->targets[0].velocity, owner);
-        tree->factor.registerValue(&data->factor[0].velocity, owner);
         tree->standing.registerValue(&data->standing, owner);
     }
 
