@@ -774,9 +774,9 @@ void AgentModel::consciousFollow() {
     // get pointer to targets
     auto t = _input.targets;
 
-    // calculate net distance for following
-    unsigned long im = agent_model::NOT;
-    unsigned long im_n_l = agent_model::NOT;
+    // calculate net distance for following targets
+    unsigned long im = agent_model::NOT;        // target on ego lane
+    unsigned long im_n_l = agent_model::NOT;    // target on neigbouring lane
 
     int insert_idx;
     for (unsigned long i = 0; i < agent_model::NOT; ++i) {
@@ -791,7 +791,8 @@ void AgentModel::consciousFollow() {
             if (im == agent_model::NOT || t[im].ds > t[i].ds)
                 im = i;
         }
-
+        
+        // compute target of neigbouring lane only during lane changes
         if (_lane_change_process_interval.getFactor() > 0 && t[i].lane == _state.decisions.laneChange) 
         {
             // check if distance is smaller
@@ -800,7 +801,7 @@ void AgentModel::consciousFollow() {
         }
     }
     
-    // instantiate distance and  velocity
+    // instantiate distance and velocity
     double ds = INFINITY, v = 0.0, factor = 1;
 
     // closest ego lane target
