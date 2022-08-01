@@ -1014,6 +1014,10 @@ double AgentModel::subconsciousFollow() {
     double res = 0;
     // get values
     for (auto &t : _state.conscious.follow.targets) {
+    
+        // ignore when distance is inf
+        if (std::isinf(t.distance))
+            continue;
 
         double vT = t.velocity;
         double ds = t.distance;
@@ -1022,10 +1026,6 @@ double AgentModel::subconsciousFollow() {
         double T = _param.follow.timeHeadway;
         double TMax = _param.follow.thwMax;
         double v = _input.vehicle.v;
-
-        // ignore when distance is inf
-        if (std::isinf(ds))
-            continue;
 
         double v0T = std::max(10.0, v0);
         double vTT = std::min(v0T, std::max(5.0, vT));
