@@ -801,14 +801,14 @@ void AgentModel::consciousFollow() {
         }
     }
     
-    // instantiate distance and velocity
+    // instantiate distance, velocity, and factor
     double ds = INFINITY, v = 0.0, factor = 1;
 
     // closest ego lane target
-    factor = 1 - _lane_change_process_interval.getFactor();
     if (im != agent_model::NOT) {
         ds = t[im].ds - t[im].size.length * 0.5 - _param.vehicle.size.length * 0.5 + _param.vehicle.pos.x;
         v = t[im].v;
+        factor = 1 - _lane_change_process_interval.getFactor();
     }
     
     // save distance and velocity
@@ -820,8 +820,10 @@ void AgentModel::consciousFollow() {
     bool standing = _input.vehicle.v < 1e-3 && v < 0.5 && ds <= _param.follow.dsStopped + 1e-2;
     _state.conscious.follow.standing = standing;
     
+    // reset distance, velocity, and factor
+    ds = INFINITY, v = 0.0, factor = 0;
+
     // closest neigbouring lane target
-    factor = _lane_change_process_interval.getFactor();
     if (im_n_l != agent_model::NOT) {
         ds = t[im_n_l].ds - t[im_n_l].size.length * 0.5 - _param.vehicle.size.length * 0.5 + _param.vehicle.pos.x;
         v = t[im_n_l].v;
