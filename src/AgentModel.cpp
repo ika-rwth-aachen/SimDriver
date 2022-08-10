@@ -182,7 +182,13 @@ void AgentModel::decisionProcessStop() {
     }
     _state.decisions.lane.id = 4;
     _state.decisions.lane.position = _input.vehicle.s + ego->route;
-    _state.decisions.lane.standingTime = INFINITY;
+    // only apply standing time when hard lane change required at end of route
+    if (ego->lane_change == 2) {
+        _state.decisions.lane.standingTime = INFINITY;
+    }
+    else {
+        _state.decisions.lane.standingTime = 0;
+    }
 
     // not yet decided about to stop or drive
     bool stop = false;
