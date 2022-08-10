@@ -112,10 +112,10 @@ void AgentModel::step(double simulationTime) {
     APPLY(&this->_state.decisions)
 
     // conscious calculation
+    consciousLaneChange();              // open
     consciousVelocity();                // done: Test 9.1, 9.2, 9.3
     consciousStop();                    // done: Test 3.3b, 3.3c
     consciousFollow();                  // done: Test 8.1, 8.2, 8.3
-    consciousLaneChange();              // open
     consciousLateralOffset();           // done: Test 7.3
     consciousReferencePoints();         // done: Test 7.1, 7.2, 7.3, 7.4
 
@@ -180,12 +180,9 @@ void AgentModel::decisionProcessStop() {
             ego = &lane;
         }   
     }
-    // only set if on last segment
-    if (ego->lane_change == 2)  {
-        _state.decisions.lane.id = 4;
-        _state.decisions.lane.position = _input.vehicle.s + ego->route;
-        _state.decisions.lane.standingTime = INFINITY;
-    }
+    _state.decisions.lane.id = 4;
+    _state.decisions.lane.position = _input.vehicle.s + ego->route;
+    _state.decisions.lane.standingTime = INFINITY;
 
     // not yet decided about to stop or drive
     bool stop = false;
@@ -254,7 +251,7 @@ void AgentModel::decisionProcessStop() {
             else if (rel->color == agent_model::TrafficLightColor::COLOR_GREEN) {
                 _state.conscious.stop.priority = true;
 
-                // "remove" stop point (by setting standing time = 0)
+                // "remove" stop point (by setting standing standingTime = 0)
                 _state.decisions.signal.id = 1;
                 _state.decisions.signal.position = _input.vehicle.s + ds;
                 _state.decisions.signal.standingTime = 0;
@@ -861,11 +858,6 @@ void AgentModel::consciousLaneChange() {
         // reset process
         _lane_change_process_interval.reset();
         _lane_change_process_interval.setScale(0.0);
-
-        // reset stop point
-        _state.decisions.lane.id = 4;
-        _state.decisions.lane.position = INFINITY;
-        _state.decisions.lane.standingTime = 0;
     }
 
     // set factor, TODO: multi-lane change
