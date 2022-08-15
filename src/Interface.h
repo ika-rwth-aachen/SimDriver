@@ -124,20 +124,25 @@ namespace agent_model {
         double y[NOH]; //!< y ordinate relative to ego unit (in *m*)
         double psi[NOH]; //!< heading relative to vehicle x-axis (in *rad*)
         double kappa[NOH]; //!< curvature of the road (in *1/m*)
-        double egoLaneWidth[NOH]; //!< Width of the ego lane (in *m*)
-        double rightLaneWidth[NOH]; //!< Width of the right lane (in *m*)
-        double leftLaneWidth[NOH]; //!< Width of the left lane (in *m*)
-        double destinationPoint; //!< s coordinate of destination point (in *m*) -1 if not set
+        double egoLaneWidth[NOH]; //!< Width of ego lane (in *m*) -1 if not set
+        double rightLaneOffset[NOH]; //!< Offset to right centerlane (in *m*) 0 if not set
+        double leftLaneOffset[NOH]; //!< Offset to left centerlane (in *m*) 0 if not set
+        double destinationPoint; //!<  s coordinate of destination point (in *m*) -1 if not set
     };
 
     /*!< A class to store lane information. */
     struct Lane {
         int id; //!< Unique ID of the signal. The id is not just an identifier but also specifies the position of the lane relative to the ego lane in OpenDRIVE manner! e.g. -1 = the next lane to the left, 1 = the next lane to the right.
-        double width; //!< Width of the lane (in *m*)
-        double route; //!< Distance on the lane until the lane splits from the current route. (in *m*)
-        double closed; //!< Distance on the lane until the lane is closed. (in *m*)
+        double width; //!< Width of the lane (in *m*) -1 if not set
+        double route; //!< Distance on the lane until the lane splits from the current route. (in *m*) -1 if not set
+        double closed; //!< Distance on the lane until the lane is closed. (in *m*) -1 if not set
         DrivingDirection dir; //!< The driving direction of the lane related to the ego direction.
-        Accessibility access; //!< The accessibility of the lane from the ego lane.
+        Accessibility access; //!< The accessibility of the lane from the ego lane. - true if type driving
+        int lane_change; //!< Flag if lane change is
+                        // not defined (-1)
+                        // not necessary (0) - already on target lane
+                        // intended (1) - necessary, but also later possibility
+                        // required (2) - last chance
     };
 
     /*!< A class to store control path information */
@@ -145,6 +150,14 @@ namespace agent_model {
         double offset; //!< The lateral offset from the reference line to be controlled to. (in *m*)
         double factor; //!< A factor to describe the influence of the point
         DynamicPosition refPoints[NORP]; //!< The reference points for the lateral control.
+    };
+
+      /*!< A class to store the internal state for the conscious&#x2F;follow component. */
+    struct FollowTarget {
+        double factor; //!< The influence of the target
+        double lane; //!< Lane ID of the actual lane of the target relative to driver's lane.
+        double distance; //!< The distance to the target to be followed. (in *m*)
+        double velocity; //!< The absolute velocity of the target to be followed. (in *m/s*)
     };
 
     /*!< A class to store signal information. */
@@ -190,6 +203,7 @@ namespace agent_model {
         DecisionStopping signal; //!< The decision information caused by a signal.
         DecisionStopping target; //!< The decision information caused by a target.
         DecisionStopping destination; //!< The decision information caused by a destination.
+        DecisionStopping lane; //!< The decision information caused by a lane change.
     };
 
     /*!< A class to store the internal state for the conscious&#x2F;velocity component. */
@@ -209,8 +223,7 @@ namespace agent_model {
 
     /*!< A class to store the internal state for the conscious&#x2F;follow component. */
     struct ConsciousFollow {
-        double distance; //!< The distance to the target to be followed. (in *m*)
-        double velocity; //!< The absolute velocity of the target to be followed. (in *m/s*)
+        FollowTarget targets[2];
         bool standing; //!< A flag to define whether the driver wants to keep the vehicle in standstill.
     };
 

@@ -78,8 +78,8 @@ namespace agent_model {
         Injection<double> psi[NOH];
         Injection<double> kappa[NOH];
         Injection<double> egoLaneWidth[NOH];
-        Injection<double> rightLaneWidth[NOH];
-        Injection<double> leftLaneWidth[NOH];
+        Injection<double> rightLaneOffset[NOH];
+        Injection<double> leftLaneOffset[NOH];
     };
 
     struct __Lane : public Injection<Lane> {

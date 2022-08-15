@@ -76,7 +76,7 @@ namespace agent_model {
         void init(double s) {
 
             _sActual = s;
-            _elements.clear();
+            if (_elements.size() > 0) _elements.clear();
 
         }
 

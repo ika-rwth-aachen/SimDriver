@@ -75,8 +75,8 @@ namespace agent_model {
         registerArray(&tree->psi[0], &data->psi[0], owner, {NOH});
         registerArray(&tree->kappa[0], &data->kappa[0], owner, {NOH});
         registerArray(&tree->egoLaneWidth[0], &data->egoLaneWidth[0], owner, {NOH});
-        registerArray(&tree->rightLaneWidth[0], &data->rightLaneWidth[0], owner, {NOH});
-        registerArray(&tree->leftLaneWidth[0], &data->leftLaneWidth[0], owner, {NOH});
+        registerArray(&tree->rightLaneOffset[0], &data->rightLaneOffset[0], owner, {NOH});
+        registerArray(&tree->leftLaneOffset[0], &data->leftLaneOffset[0], owner, {NOH});
     }
 
     void registerTree(__Lane *tree, Lane *data, const void *owner) {
@@ -149,8 +149,8 @@ namespace agent_model {
 
     void registerTree(__ConsciousFollow *tree, ConsciousFollow *data, const void *owner) {
         tree->registerValue(data, owner);
-        tree->distance.registerValue(&data->distance, owner);
-        tree->velocity.registerValue(&data->velocity, owner);
+        tree->distance.registerValue(&data->targets[0].distance, owner);
+        tree->velocity.registerValue(&data->targets[0].velocity, owner);
         tree->standing.registerValue(&data->standing, owner);
     }
 
