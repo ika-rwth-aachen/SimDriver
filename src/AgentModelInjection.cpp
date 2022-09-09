@@ -126,7 +126,8 @@ namespace agent_model {
 
     void registerTree(__Decisions *tree, Decisions *data, const void *owner) {
         tree->registerValue(data, owner);
-        tree->laneChange.registerValue(&data->laneChange, owner);
+        tree->laneChange.registerValue(&data->laneChangeInt, owner);
+        tree->laneChange.registerValue(&data->laneChangeDec, owner);
         registerTree(&tree->lateral, &data->lateral, owner);
         registerTree(&tree->signal, &data->signal, owner);
         registerTree(&tree->target, &data->target, owner);
