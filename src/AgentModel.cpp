@@ -460,7 +460,8 @@ void AgentModel::decisionProcessStop() {
 void AgentModel::decisionLaneChange() {
 
     // check for route-based lane changes
-    _state.decisions.laneChange = 0;
+    _state.decisions.laneChangeDes = 0;
+    _state.decisions.laneChangeDir = 0;
 
     // determine velocity dependend required length (assumption: v is constant)
     double safety_factor = 1.0;
@@ -500,6 +501,8 @@ void AgentModel::decisionLaneChange() {
     else if (right && right->access == agent_model::ACC_ACCESSIBLE && right->route >= ego->route) {
         perform_change = -1;
     }
+    // set final lane_change direction
+    _state.decisions.laneChangeDir = perform_change;
 
     // if lane_change desired
     if (perform_change != 0) {
@@ -554,7 +557,7 @@ void AgentModel::decisionLaneChange() {
     }
 
     // set final lane_change decision
-    _state.decisions.laneChange = perform_change;
+    _state.decisions.laneChangeDes = perform_change;
 
     return; 
     // TODO: do not consider MOBIL model right now
@@ -624,11 +627,11 @@ void AgentModel::decisionLaneChange() {
 
     // TODO: only decide lane change, when lane is available
     if(sL > 0.999 && iL >= -0.5)
-        _state.decisions.laneChange = 1;
+        _state.decisions.laneChangeDes = 1;
     else if(sR > 0.999 && iR >= -0.5)
-        _state.decisions.laneChange = -1;
+        _state.decisions.laneChangeDes = -1;
     else
-        _state.decisions.laneChange = 0;
+        _state.decisions.laneChangeDes = 0;
 }
 
 
@@ -779,7 +782,10 @@ void AgentModel::consciousFollow() {
 
     // calculate net distance for following targets
     unsigned long im = agent_model::NOT;        // target on ego lane
-    unsigned long im_n_l = agent_model::NOT;    // target on neigbouring lane
+    unsigned long im_loi = agent_model::NOT;    // target on neigbouring lane
+
+    // get lane of interest
+    int loi = _state.decisions.laneChangeDir;
 
     int insert_idx;
     for (unsigned long i = 0; i < agent_model::NOT; ++i) {
@@ -795,23 +801,22 @@ void AgentModel::consciousFollow() {
                 im = i;
         }
         
-        // compute target of neigbouring lane only during lane changes
-        if (_lane_change_process_interval.getFactor() > 0 && t[i].lane == _state.decisions.laneChange) 
+        if (t[i].lane == loi) 
         {
             // check if distance is smaller
-            if (im_n_l == agent_model::NOT || t[im_n_l].ds > t[i].ds)
-                im_n_l = i;
+            if (im_loi == agent_model::NOT || t[im_loi].ds > t[i].ds)
+                im_loi = i;
         }
     }
     
     // instantiate distance, velocity, and factor
-    double ds = INFINITY, v = 0.0, factor = 1;
+    double ds = INFINITY, v = 0.0;
+    double factor = 1 - _lane_change_process_interval.getFactor();
 
     // closest ego lane target
     if (im != agent_model::NOT) {
         ds = t[im].ds - t[im].size.length * 0.5 - _param.vehicle.size.length * 0.5 + _param.vehicle.pos.x;
         v = t[im].v;
-        factor = 1 - _lane_change_process_interval.getFactor();
     }
     
     // save distance and velocity
@@ -823,14 +828,14 @@ void AgentModel::consciousFollow() {
     bool standing = _input.vehicle.v < 1e-3 && v < 0.5 && ds <= _param.follow.dsStopped + 1e-2;
     _state.conscious.follow.standing = standing;
     
-    // reset distance, velocity, and factor
-    ds = INFINITY, v = 0.0, factor = 0;
+    // reset distance, velocity, and factor for loi target
+    ds = INFINITY, v = 0.0;
+    factor = (_lane_change_process_interval.getFactor() > 0);
 
     // closest neigbouring lane target
-    if (im_n_l != agent_model::NOT) {
-        ds = t[im_n_l].ds - t[im_n_l].size.length * 0.5 - _param.vehicle.size.length * 0.5 + _param.vehicle.pos.x;
-        v = t[im_n_l].v;
-        factor = _lane_change_process_interval.getFactor();
+    if (im_loi != agent_model::NOT) {
+        ds = t[im_loi].ds - t[im_loi].size.length * 0.5 - _param.vehicle.size.length * 0.5 + _param.vehicle.pos.x;
+        v = t[im_loi].v;
     }
 
     // save distance and velocity
@@ -842,11 +847,11 @@ void AgentModel::consciousFollow() {
 
 void AgentModel::consciousLaneChange() {
 
-    if(_state.decisions.laneChange != 0 && !_lane_change_process_interval.isSet()) {
+    if(_state.decisions.laneChangeDes != 0 && !_lane_change_process_interval.isSet()) {
 
         // start process
         _lane_change_process_interval.setTimeInterval(_param.laneChange.time);
-        _lane_change_process_interval.setScale(1.0 * _state.decisions.laneChange);
+        _lane_change_process_interval.setScale(1.0 * _state.decisions.laneChangeDes);
 
     }
 
