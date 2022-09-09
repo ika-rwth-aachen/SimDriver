@@ -460,8 +460,8 @@ void AgentModel::decisionProcessStop() {
 void AgentModel::decisionLaneChange() {
 
     // check for route-based lane changes
-    _state.decisions.laneChangeDes = 0;
-    _state.decisions.laneChangeDir = 0;
+    _state.decisions.laneChangeInt = 0; // intention
+    _state.decisions.laneChangeDec = 0; // decision
 
     // determine velocity dependend required length (assumption: v is constant)
     double safety_factor = 1.0;
@@ -483,11 +483,10 @@ void AgentModel::decisionLaneChange() {
             right = &lane;
         } 
     }
+
     // skip if ego lane not found
     if (!ego) return;
 
-    // initiliaze variables
-    int perform_change = 0;
     int lane_change_status = ego->lane_change;
     
     // skip if lane_change not desired
@@ -495,30 +494,23 @@ void AgentModel::decisionLaneChange() {
 
     // if left lane accessible and route longer 
     if (left &&  left->access == agent_model::ACC_ACCESSIBLE && left->route >= ego->route) {
-        perform_change = 1;
+        _state.decisions.laneChangeInt = 1;
     }
     // if right lane accessible and route longer 
     else if (right && right->access == agent_model::ACC_ACCESSIBLE && right->route >= ego->route) {
-        perform_change = -1;
+        _state.decisions.laneChangeInt = -1;
     }
-    // set final lane_change direction
-    _state.decisions.laneChangeDir = perform_change;
 
-    // if lane_change desired
-    if (perform_change != 0) {
+    // if lane_change intended
+    if (_state.decisions.laneChangeInt != 0) {
         
         // allow later lane change if still enough route available
         if (lane_change_status == 2 && ego->route > length) {
             lane_change_status = 1;
         }
 
-        // skip lane change if route to short
-        if (ego->route < length) {
-            perform_change = 0;
-        }
-
-        // skip lane change if lane occupied and later possible (status 1)
-        if (lane_change_status == 1 && perform_change != 0) {
+        // skip lane change if lane too short and later possible (status 1)
+        if (ego->route < length && lane_change_status == 1) {
 
             // consider only targets within critical thw
             double thw_crit = 1;
@@ -530,36 +522,34 @@ void AgentModel::decisionLaneChange() {
                 auto tar = &target;
 
                 // skip target if not on lane
-                if (tar->lane != perform_change) continue;
+                if (tar->lane != _state.decisions.laneChangeInt) continue;
 
                 // caculate dv and s_crit
                 double dv = _input.vehicle.v - tar->v;
                 double s_crit = thw_crit * dv;
 
-                // skip if too close
+                // skip lane change if too close
                 if (abs(tar->ds) < safety_boundary) {
-                    perform_change = 0;
+                    _state.decisions.laneChangeDec = 0;
                     break; 
                 }
 
                 // if ego vehicle is faster - target in front is critical
                 if (dv > 0 && tar->ds > safety_boundary && tar->ds < s_crit) {
-                    perform_change = 0;
+                    _state.decisions.laneChangeDec = 0;
                     break; 
                 }
                 // if ego vehicle is slower - target in back is critical
                 if (dv < 0 && tar->ds < -safety_boundary && tar->ds > s_crit) {
-                    perform_change = 0;
+                    _state.decisions.laneChangeDec = 0;
                     break; 
                 }
             }
         }
     }
 
-    // set final lane_change decision
-    _state.decisions.laneChangeDes = perform_change;
-
     return; 
+
     // TODO: do not consider MOBIL model right now
 
     // check positions
@@ -627,11 +617,11 @@ void AgentModel::decisionLaneChange() {
 
     // TODO: only decide lane change, when lane is available
     if(sL > 0.999 && iL >= -0.5)
-        _state.decisions.laneChangeDes = 1;
+        _state.decisions.laneChangeDec = 1;
     else if(sR > 0.999 && iR >= -0.5)
-        _state.decisions.laneChangeDes = -1;
+        _state.decisions.laneChangeDec = -1;
     else
-        _state.decisions.laneChangeDes = 0;
+        _state.decisions.laneChangeDec = 0;
 }
 
 
@@ -784,9 +774,6 @@ void AgentModel::consciousFollow() {
     unsigned long im = agent_model::NOT;        // target on ego lane
     unsigned long im_loi = agent_model::NOT;    // target on neigbouring lane
 
-    // get lane of interest
-    int loi = _state.decisions.laneChangeDir;
-
     int insert_idx;
     for (unsigned long i = 0; i < agent_model::NOT; ++i) {
 
@@ -801,7 +788,7 @@ void AgentModel::consciousFollow() {
                 im = i;
         }
         
-        if (t[i].lane == loi) 
+        if (t[i].lane == _state.decisions.laneChangeInt) 
         {
             // check if distance is smaller
             if (im_loi == agent_model::NOT || t[im_loi].ds > t[i].ds)
@@ -847,11 +834,11 @@ void AgentModel::consciousFollow() {
 
 void AgentModel::consciousLaneChange() {
 
-    if(_state.decisions.laneChangeDes != 0 && !_lane_change_process_interval.isSet()) {
+    if(_state.decisions.laneChangeDec != 0 && !_lane_change_process_interval.isSet()) {
 
         // start process
         _lane_change_process_interval.setTimeInterval(_param.laneChange.time);
-        _lane_change_process_interval.setScale(1.0 * _state.decisions.laneChangeDes);
+        _lane_change_process_interval.setScale(1.0 * _state.decisions.laneChangeDec);
 
     }
 
