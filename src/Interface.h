@@ -198,7 +198,8 @@ namespace agent_model {
 
     /*!< A class to store the internal state for the decisions components. */
     struct Decisions {
-        int laneChange; //!< The decision to perform a lane change. The sign defines the direction. The value defines the number of lanes to be changed.
+        int laneChangeDir; //!< The desire to perform a lane change. The sign defines the direction. The value defines the number of lanes to be changed.
+        int laneChangeDes; //!< The decision to perform a lane change. The sign defines the direction. The value defines the number of lanes to be changed.
         Point lateral; //!< The decision to move to a defined lateral offset within a defined distance or time (mode=0: distance, mode=1: time).
         DecisionStopping signal; //!< The decision information caused by a signal.
         DecisionStopping target; //!< The decision information caused by a target.
