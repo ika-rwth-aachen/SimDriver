@@ -504,15 +504,23 @@ void AgentModel::decisionLaneChange() {
     // if lane_change intended
     if (_state.decisions.laneChangeInt != 0) {
         
+        _state.decisions.laneChangeDec = _state.decisions.laneChangeInt;
+
         // allow later lane change if still enough route available
         if (lane_change_status == 2 && ego->route > length) {
             lane_change_status = 1;
         }
 
-        // skip lane change if lane too short and later possible (status 1)
+        // skip lane change if route to short and later possible (status 1)
         if (ego->route < length && lane_change_status == 1) {
+            _state.decisions.laneChangeDec = 0;
+            return;
+        }
 
-            // consider only targets within critical thw
+        // consider targets when status == 1
+        if (lane_change_status == 1) {
+
+            // only within critical thw
             double thw_crit = 1;
             double safety_boundary = 5;
 
