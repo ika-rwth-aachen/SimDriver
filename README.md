@@ -4,7 +4,7 @@
 
 A responsive driver model for traffic simulations to create exact and closed-loop microscopic traffic scenarios.
 
-A detailed description of the motivation, concept and architecture can be found [here]([https://www.sae.org/mobilityrxiv](https://publications.rwth-aachen.de/record/816233/files/816233.pdf?)) 
+A detailed description of the motivation, concept and architecture can be found [here](https://publications.rwth-aachen.de/record/816233/files/816233.pdf).
 
 ## Documentation
 
