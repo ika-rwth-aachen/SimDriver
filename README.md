@@ -4,9 +4,13 @@
 
 A responsive driver model for traffic simulations to create exact and closed-loop microscopic traffic scenarios.
 
-A detailed description of the motivation, concept and architecture can be found [here](https://www.sae.org/mobilityrxiv) *Link will be valid within 04/21*
+A detailed description of the motivation, concept and architecture can be found [here]([https://www.sae.org/mobilityrxiv](https://publications.rwth-aachen.de/record/816233/files/816233.pdf?)) 
 
 ## Documentation
 
 * Capabilities are described [here](src/README.md)
 * A detailed API documentation can be found [here](https://ika-rwth-aachen.github.io/SimDriver/).
+
+## Contact
+
+Main contact: Daniel Becker, daniel.becker@ika.rwth-aachen.de
